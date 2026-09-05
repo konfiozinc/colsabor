@@ -1,0 +1,26 @@
+{
+  "name": "Colsabor · Comida sana",
+  "short_name": "Colsabor",
+  "description": "Menú digital de Colsabor, comida sana en El Porvenir. Papas rellenas, empanadas, arepas, jugos y más.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#2E7D32",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

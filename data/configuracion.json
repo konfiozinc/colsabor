@@ -1,0 +1,10 @@
+{
+  "promocion": "🥗 PROMO DE LA SEMANA: 2x1 en Jugos Naturales",
+  "horario": {
+    "dias": "1,2,3,4,5,6",
+    "inicio": 7,
+    "fin": 21
+  },
+  "categorias": ["Desayunos", "Almuerzos", "Carnes", "Pescados", "Sopas", "Acompañamientos", "Bebidas"],
+  "whatsapp": "573042009142"
+}

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Colsabor · Comida sana</title>
+    <meta name="description" content="Menú digital de Colsabor, comida sana en El Porvenir. Papas rellenas, empanadas, arepas de huevo, jugos naturales, desayunos, almuerzos y más. ¡Pide por WhatsApp!">
+    <meta name="keywords" content="comida sana, papas rellenas, empanadas, arepas de huevo, jugos naturales, desayunos, almuerzos, El Porvenir">
+    <meta name="author" content="Colsabor">
+    <meta property="og:title" content="Colsabor · Comida sana">
+    <meta property="og:description" content="Menú digital de Colsabor. Papas rellenas, empanadas, arepas, jugos, desayunos, almuerzos y más.">
+    <meta property="og:image" content="https://tudominio.com/assets/logo/logo-colsabor.png">
+    <meta property="og:url" content="https://tudominio.com/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://tudominio.com/">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+<div id="app" x-data="appData" x-init="initApp()" class="card-container">
+
+    <!-- ===== HERO ===== -->
+    <div class="hero">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px;margin-bottom:2px;position:relative;">
+            <button @click="installModalOpen = true" title="Instalar App"
+                style="width:36px;height:36px;background:var(--accent);border:none;border-radius:50%;color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(240,180,41,0.5);flex-shrink:0;">
+                <i class="fas fa-download" style="font-size:15px;"></i>
+            </button>
+            <h1 class="hero-title" style="position:absolute;left:50%;transform:translateX(-50%);margin:0;pointer-events:none;">Colsabor</h1>
+            <button @click="adminMode = !adminMode" :title="adminMode ? 'Cerrar panel admin' : 'Panel admin'"
+                style="width:32px;height:32px;border-radius:50%;background:rgba(46,125,50,0.15);border:1px solid rgba(46,125,50,0.4);color:var(--primary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;">
+                <i :class="adminMode ? 'fas fa-user-lock' : 'fas fa-lock'"></i>
+            </button>
+        </div>
+
+        <img src="assets/logo/logo-colsabor.png" alt="Colsabor Logo" class="hero-logo-img" @click="tapLogo()" decoding="async" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Ccircle cx=%2260%22 cy=%2260%22 r=%2250%22 fill=%22%232E7D32%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 font-size=%2250%22 font-family=%22sans-serif%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.35em%22%3E🥗%3C/text%3E%3C/svg%3E'">
+
+        <div class="status-badge" :class="isOpen ? '' : 'closed'">
+            <span class="dot"></span>
+            <span x-text="isOpen ? 'ABIERTO' : 'CERRADO'"></span>
+        </div>
+
+        <p class="hero-subtitle">🍽️ COMIDA SANA · EL PORVENIR</p>
+
+        <div class="quick-buttons">
+            <a href="https://wa.me/573042009142" target="_blank" class="quick-btn btn-whatsapp">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
+            </a>
+            <a href="tel:3042009142" class="quick-btn btn-phone">
+                <i class="fas fa-phone-alt"></i>
+                <span>Llamar</span>
+            </a>
+            <a href="https://www.google.com/maps/place/9%C2%B024'31.2%22N+75%C2%B042'42.9%22W/@9.4086682,-75.7144896,17z" target="_blank" class="quick-btn btn-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Ubicación</span>
+            </a>
+            <button @click="shareCard()" class="quick-btn btn-share">
+                <i class="fas fa-share-alt"></i>
+                <span>Compartir</span>
+            </button>
+            <button @click="saveContact()" class="quick-btn btn-save">
+                <i class="fas fa-address-card"></i>
+                <span>Guardar</span>
+            </button>
+            <button @click="abrirQR()" class="quick-btn btn-qr">
+                <i class="fas fa-qrcode"></i>
+                <span>QR</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== PROMOCIÓN ===== -->
+    <div class="promo-banner" x-show="promoText" x-text="promoText"></div>
+
+    <!-- ===== MENÚ ===== -->
+    <div class="menu-section">
+        <div class="menu-header">
+            <h2>🍽️ MENÚ</h2>
+            <span x-text="productosFiltrados.length + ' producto' + (productosFiltrados.length !== 1 ? 's' : '')"></span>
+        </div>
+
+        <div class="menu-search-wrap">
+            <input type="text" x-model="busqueda" placeholder="🔎 Buscar en el menú...">
+        </div>
+
+        <div class="category-filters">
+            <template x-for="cat in categorias" :key="cat">
+                <a class="category-chip" :href="'#cat-' + cat.toLowerCase()">
+                    <span x-text="emojisCategoria[cat]"></span>
+                    <span x-text="cat"></span>
+                </a>
+            </template>
+        </div>
+
+        <div class="menu-grid-wrap">
+            <template x-for="grupo in categoriasConProductos" :key="grupo.nombre">
+                <div class="categoria-group" :id="'cat-' + grupo.nombre.toLowerCase()" x-show="grupo.count > 0">
+                    <div class="categoria-header">
+                        <span class="categoria-emoji" x-text="grupo.emoji"></span>
+                        <span class="categoria-titulo" x-text="grupo.nombre.toUpperCase()"></span>
+                        <span class="categoria-count" x-text="grupo.count"></span>
+                    </div>
+                    <div class="categoria-separator"></div>
+                    <div class="menu-grid">
+                        <template x-for="p in grupo.productos" :key="p.id">
+                            <div class="menu-card" :class="{ 'agotado': p.agotado }">
+                                <template x-if="!esImagenEmoji(p.imagen)">
+                                    <img :src="p.imagen || 'assets/logo/no-image.webp'" :alt="p.nombre" loading="lazy" decoding="async" @error="if (!$event.target.src.includes('no-image.webp')) $event.target.src='assets/logo/no-image.webp'">
+                                </template>
+                                <template x-if="esImagenEmoji(p.imagen)">
+                                    <div class="img-emoji" role="img" :aria-label="p.nombre" x-text="p.imagen"></div>
+                                </template>
+                                <span class="badge-agotado" x-show="p.agotado">AGOTADO</span>
+                                <div class="name" x-text="p.nombre"></div>
+                                <div class="price" x-text="'$' + parseInt(p.precio).toLocaleString('es-CO')"></div>
+                                <button class="btn-pedido" :disabled="p.agotado"
+                                    @click="p.agotado ? null : agregarAlCarrito(p)">
+                                    <span x-text="p.agotado ? '❌ AGOTADO' : '🛒 Agregar'"></span>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+            <div class="no-results" x-show="productosFiltrados.length === 0">😕 No se encontraron productos</div>
+        </div>
+    </div>
+
+    <!-- ===== GALERÍA ===== -->
+    <div class="carousel-section">
+        <h2>📸 GALERÍA</h2>
+        <div class="carousel-container" x-data="carouselData()" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
+            <div class="carousel-track" :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
+                <template x-for="(img, idx) in images" :key="idx">
+                    <div class="carousel-slide">
+                        <img :src="img" :alt="'Galería ' + idx" loading="lazy" decoding="async" @error="$event.target.closest('.carousel-slide').style.display='none'">
+                    </div>
+                </template>
+            </div>
+            <button class="carousel-btn prev" @click="prevSlide()"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn next" @click="nextSlide()"><i class="fas fa-chevron-right"></i></button>
+            <div class="carousel-dots">
+                <template x-for="(img, idx) in images" :key="idx">
+                    <span :class="{ 'active': idx === currentSlide }" @click="goTo(idx)"></span>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RESEÑAS ===== -->
+    <div class="reviews-section">
+        <div class="reviews-header">
+            <span class="reviews-title">⭐ Reseñas</span>
+            <div class="reviews-avg" x-show="reseñas.length > 0">
+                <span x-text="promedioEstrellas + ' ★'"></span>
+                <span style="font-size:11px; color:var(--muted);" x-text="'(' + reseñas.length + ')'"></span>
+            </div>
+        </div>
+
+        <div class="review-form">
+            <p class="review-form-title">Deja tu reseña</p>
+            <div class="stars-input">
+                <button class="star-btn" :class="{'active': nuevaReseña.estrellas >= 1}" @click="nuevaReseña.estrellas = 1">★</button>
+                <button class="star-btn" :class="{'active': nuevaReseña.estrellas >= 2}" @click="nuevaReseña.estrellas = 2">★</button>
+                <button class="star-btn" :class="{'active': nuevaReseña.estrellas >= 3}" @click="nuevaReseña.estrellas = 3">★</button>
+                <button class="star-btn" :class="{'active': nuevaReseña.estrellas >= 4}" @click="nuevaReseña.estrellas = 4">★</button>
+                <button class="star-btn" :class="{'active': nuevaReseña.estrellas >= 5}" @click="nuevaReseña.estrellas = 5">★</button>
+            </div>
+            <input type="text" x-model="nuevaReseña.autor" placeholder="Tu nombre" class="review-input" style="margin-bottom:6px;">
+            <textarea x-model="nuevaReseña.texto" placeholder="Tu comentario (opcional)" rows="2" class="review-input" style="resize:none;"></textarea>
+            <button class="btn-send-review" @click="enviarReseña()">⭐ Publicar reseña</button>
+        </div>
+
+        <template x-for="(r, i) in reseñas.slice(0,5)" :key="i">
+            <div class="review-card">
+                <div class="review-top">
+                    <span class="review-name" x-text="r.autor || 'Anónimo'"></span>
+                    <span class="review-stars" style="color:var(--accent);" x-text="'★'.repeat(r.estrellas||0)+'☆'.repeat(5-(r.estrellas||0))"></span>
+                </div>
+                <div class="review-comment" x-show="r.texto" x-text="r.texto"></div>
+                <div class="review-date" x-text="new Date(r.fecha).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'})"></div>
+            </div>
+        </template>
+        <div class="no-reviews" x-show="reseñas.length === 0">No hay reseñas aún. ¡Sé el primero!</div>
+    </div>
+
+    <!-- ===== PANEL ADMIN ===== -->
+    <div class="admin-panel" x-show="adminMode" x-cloak>
+        <div class="admin-head">
+            <div>
+                <div class="admin-title">🔧 PANEL ADMIN · Colsabor</div>
+                <div class="admin-sub" x-text="adminAuthenticated ? 'Sesión iniciada · los cambios se guardan en este dispositivo' : 'Acceso restringido con PIN'"></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="admin-btn btn-mini btn-suave" @click="adminMode=false">✖ Cerrar</button>
+                <button class="admin-btn btn-mini btn-peligro" x-show="adminAuthenticated" @click="logoutAdmin()">Salir</button>
+            </div>
+        </div>
+
+        <!-- Bloqueo por PIN -->
+        <div x-show="!adminAuthenticated">
+            <div style="text-align:center;padding:10px 0 4px;">
+                <div style="font-size:36px;line-height:1;">🔐</div>
+                <p style="font-size:12px;color:var(--text);margin:8px 0 12px;font-weight:600;">Ingresa el PIN para administrar el menú</p>
+                <input class="admin-input" type="password" x-model="adminPassword" placeholder="PIN"
+                    @keydown.enter="loginAdmin()" inputmode="numeric"
+                    style="max-width:180px;margin:0 auto 10px;text-align:center;display:block;font-size:16px;letter-spacing:6px;">
+                <button class="admin-btn btn-accion" @click="loginAdmin()" style="width:100%;">Ingresar</button>
+                <p class="admin-sub" style="margin-top:10px;">PIN de demostración: 1234 · cámbialo en el código (const ADMIN_PIN)</p>
+            </div>
+        </div>
+
+        <!-- Gestión (sesión iniciada) -->
+        <div x-show="adminAuthenticated">
+            <div class="admin-stats">
+                <span class="admin-chip">📦 <span x-text="productos.length"></span> productos</span>
+                <span class="admin-chip">🚫 <span x-text="totalAgotados()"></span> agotados</span>
+                <span class="admin-chip">🗂️ <span x-text="categorias.length"></span> categorías</span>
+            </div>
+
+            <!-- Catálogo -->
+            <div class="admin-block">
+                <h4>🍽️ Editar catálogo</h4>
+                <div class="admin-list">
+                    <template x-for="p in productos" :key="p.id">
+                        <div class="product-item">
+                            <div class="product-emoji">
+                                <template x-if="esImagenEmoji(p.imagen)"><span x-text="p.imagen"></span></template>
+                                <template x-if="!esImagenEmoji(p.imagen)"><img :src="p.imagen || 'assets/logo/no-image.webp'" loading="lazy" @error="$event.target.style.display='none'"></template>
+                            </div>
+                            <input class="admin-input grow" x-model="p.nombre" @change="persistirProductos()" title="Nombre" style="min-width:110px;">
+                            <select class="admin-select" x-model="p.categoria" @change="persistirProductos()" title="Categoría" style="width:auto;flex:0 0 auto;font-size:11px;">
+                                <template x-for="c in categorias" :key="c"><option :value="c" x-text="c"></option></template>
+                            </select>
+                            <input class="admin-input" type="number" x-model.number="p.precio" @change="persistirProductos()" title="Precio" style="width:76px;">
+                            <button class="admin-btn btn-mini" :class="p.agotado ? 'btn-accion' : 'btn-peligro'" @click="toggleAgotado(p)" x-text="p.agotado ? 'Disponible' : 'Agotar'"></button>
+                            <button class="admin-btn btn-mini btn-peligro" @click="deleteProduct(p.id)" title="Eliminar">🗑️</button>
+                        </div>
+                    </template>
+                </div>
+                <p class="admin-sub" style="margin-top:8px;">💡 Escribe el nombre/precio/categoría y pulsa fuera del campo para guardar.</p>
+            </div>
+
+            <!-- Agregar producto -->
+            <div class="admin-block">
+                <h4>➕ Agregar producto</h4>
+                <input class="admin-input" x-model="newProduct.nombre" placeholder="Nombre del producto" style="margin-bottom:8px;">
+                <div class="admin-row">
+                    <input class="admin-input" type="number" x-model.number="newProduct.precio" placeholder="Precio" style="width:92px;">
+                    <select class="admin-select grow" x-model="newProduct.categoria">
+                        <template x-for="c in categorias" :key="c"><option :value="c" x-text="c"></option></template>
+                    </select>
+                </div>
+                <div class="admin-row" style="margin-bottom:10px;">
+                    <input class="admin-input grow" x-model="newProduct.imagen" placeholder="Emoji o ruta de foto · ej: 🍛 o assets/x.webp">
+                    <div class="product-emoji">
+                        <template x-if="!esImagenEmoji(newProduct.imagen) && newProduct.imagen"><img :src="newProduct.imagen" loading="lazy" @error="$event.target.style.display='none'"></template>
+                        <template x-if="esImagenEmoji(newProduct.imagen) || !newProduct.imagen"><span x-text="esImagenEmoji(newProduct.imagen) ? newProduct.imagen : '🍽️'"></span></template>
+                    </div>
+                </div>
+                <button class="admin-btn btn-accion" @click="addProduct()" style="width:100%;">➕ Agregar al menú</button>
+            </div>
+
+            <!-- Promoción y horario -->
+            <div class="admin-block">
+                <h4>📣 Promoción y horario</h4>
+                <label class="admin-label">Promoción visible</label>
+                <input class="admin-input" x-model="promoText" placeholder="Texto de la promoción">
+                <button class="admin-btn btn-accion" @click="guardarPromo()" style="width:100%;margin-top:8px;">💾 Guardar promoción</button>
+
+                <label class="admin-label">Horario · días (0=Domingo … 6=Sábado)</label>
+                <div class="admin-row">
+                    <input class="admin-input grow" x-model="adminHorario.dias" placeholder="1,2,3,4,5,6" title="Días de atención">
+                    <input class="admin-input" type="number" x-model.number="adminHorario.inicio" style="width:70px;" title="Hora de apertura (0-23)">
+                    <span style="font-weight:900;color:var(--muted);">a</span>
+                    <input class="admin-input" type="number" x-model.number="adminHorario.fin" style="width:70px;" title="Hora de cierre (0-23)">
+                </div>
+                <p class="admin-sub" x-text="'Vista actual: ' + horarioTexto" style="margin-bottom:8px;"></p>
+                <button class="admin-btn btn-accion" @click="guardarHorario()" style="width:100%;">💾 Guardar horario</button>
+            </div>
+
+            <!-- Datos -->
+            <div class="admin-block">
+                <h4>⚙️ Datos</h4>
+                <div class="admin-row" style="margin-bottom:6px;">
+                    <button class="admin-btn btn-suave" @click="exportarMenu()" style="flex:1;">📋 Exportar menú (JSON)</button>
+                    <button class="admin-btn btn-peligro" @click="restablecerMenu()" style="flex:1;">↩️ Restaurar original</button>
+                </div>
+                <p class="admin-sub">Para publicar los cambios a todos los visitantes: toca "Exportar menú" y pega el JSON en la constante <b>productosIniciales</b> del código (y en <b>data/productos.json</b>).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <p class="font-semibold" style="color:var(--primary-dark);">Colsabor · Comida sana</p>
+        <p class="text-xs" style="color:var(--muted);">El Porvenir</p>
+        <p class="text-xs" style="color:var(--muted);" x-text="'Horario: ' + horarioTexto"></p>
+        <p class="marca">✦ Colsabor · Todos los derechos reservados ✦</p>
+    </div>
+
+    <!-- ===== BOTÓN FLOTANTE WHATSAPP ===== -->
+    <div class="wa-float-wrap">
+        <div class="wa-ring"></div>
+        <div class="wa-ring"></div>
+        <div class="wa-ring"></div>
+        <a href="https://wa.me/573042009142" target="_blank" class="whatsapp-float" id="whatsappFloat">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- ===== CARRITO FAB ===== -->
+    <div style="position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateX(-145px);z-index:49;">
+        <button class="cart-fab" @click="carritoOpen = true"
+            :style="totalItems > 0 ? 'transform:scale(1.08);box-shadow:0 6px 28px rgba(240,180,41,0.8)' : ''">
+            🛒
+            <span class="cart-badge" x-show="totalItems > 0" x-text="totalItems"></span>
+        </button>
+    </div>
+
+    <!-- ===== MODAL CARRITO ===== -->
+    <div class="cart-overlay" x-show="carritoOpen" x-cloak
+        :style="carritoOpen ? 'display:flex' : 'display:none'"
+        @click.self="carritoOpen=false">
+        <div class="cart-sheet">
+            <div class="cart-handle"></div>
+            <div class="cart-header">
+                <span class="cart-title">🛒 MI PEDIDO</span>
+                <span style="font-size:12px;color:var(--muted);font-family:var(--font);"
+                    x-text="totalItems + ' producto' + (totalItems !== 1 ? 's' : '')"></span>
+            </div>
+            <div class="cart-empty" x-show="carrito.length === 0">
+                <div class="cart-empty-icon">🛒</div>
+                <p>Tu pedido está vacío.<br>¡Agrega algo del menú!</p>
+            </div>
+            <template x-for="item in carrito" :key="item.id">
+                <div class="cart-item">
+                    <div class="cart-item-emoji" x-text="item.emoji"></div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-name" x-text="item.nombre"></div>
+                        <div class="cart-item-price" x-text="'$' + (item.precio * item.cantidad).toLocaleString('es-CO')"></div>
+                    </div>
+                    <div class="cart-qty">
+                        <button class="qty-btn qty-minus" @click="quitarUno(item.id)">−</button>
+                        <span class="qty-num" x-text="item.cantidad"></span>
+                        <button class="qty-btn qty-plus" @click="item.cantidad++">+</button>
+                    </div>
+                </div>
+            </template>
+            <div class="cart-total-row" x-show="carrito.length > 0">
+                <span class="cart-total-label">TOTAL</span>
+                <span class="cart-total-val" x-text="'$' + totalPrecio.toLocaleString('es-CO')"></span>
+            </div>
+            <div class="cart-actions" x-show="carrito.length > 0">
+                <button class="btn-enviar-pedido" @click="enviarPedido()">
+                    <i class="fab fa-whatsapp" style="margin-right:8px;font-size:18px;"></i>
+                    Enviar pedido por WhatsApp
+                </button>
+                <button class="btn-vaciar" @click="vaciarCarrito()">🗑️ Vaciar carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL QR ===== -->
+    <div x-show="qrModalOpen" x-cloak
+        :style="qrModalOpen ? 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);' : 'display:none'"
+        @click.self="qrModalOpen=false">
+        <div style="background:#fff;border:2px solid var(--primary);border-radius:24px;padding:28px 24px;text-align:center;max-width:320px;width:90%;box-shadow:0 0 60px rgba(46,125,50,0.2);">
+            <h3 style="color:var(--primary-dark);font-weight:900;font-size:18px;letter-spacing:2px;margin-bottom:6px;">📲 COMPARTE TU TARJETA</h3>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:18px;">Escanea el QR con la cámara</p>
+            <div style="display:inline-block;padding:10px;background:#fff;border-radius:16px;border:3px solid var(--primary);box-shadow:0 0 30px rgba(46,125,50,0.2);position:relative;">
+                <img id="qrImgModal" src="" alt="QR Code" style="width:220px;height:220px;border-radius:10px;display:block;">
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;background:#fff;border-radius:50%;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+                    <img src="assets/logo/logo-colsabor.png" alt="logo" style="width:42px;height:42px;object-fit:cover;border-radius:50%;" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2242%22 height=%2242%22 viewBox=%220 0 42 42%22%3E%3Ccircle cx=%2221%22 cy=%2221%22 r=%2220%22 fill=%22%232E7D32%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 font-size=%2220%22 font-family=%22sans-serif%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.35em%22%3E🥗%3C/text%3E%3C/svg%3E'">
+                </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+                <button @click="copiarEnlace()" style="padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:20px;font-weight:800;font-size:13px;cursor:pointer;font-family:var(--font);">
+                    <i class="fas fa-copy"></i> Copiar enlace
+                </button>
+                <button @click="qrModalOpen=false" style="padding:9px 20px;background:transparent;border:1px solid rgba(0,0,0,0.1);color:var(--muted);border-radius:20px;font-size:13px;cursor:pointer;font-family:var(--font);">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL INSTALAR APP ===== -->
+    <div x-show="installModalOpen" x-cloak
+        :style="installModalOpen ? 'position:fixed;inset:0;z-index:320;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);' : 'display:none'"
+        @click.self="installModalOpen=false">
+        <div style="background:#fff;border:2px solid var(--primary);border-radius:24px;padding:26px 22px;text-align:center;max-width:340px;width:92%;box-shadow:0 0 60px rgba(46,125,50,0.2);">
+            <div style="font-size:42px;line-height:1;">📲</div>
+            <h3 style="color:var(--primary-dark);font-weight:900;font-size:18px;letter-spacing:1px;margin:10px 0 6px;">INSTALA COLSABOR</h3>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Agrega el menú a la pantalla de inicio de tu teléfono y accede al instante, como una app.</p>
+            <button class="btn-instalar" x-show="esInstalableAhora()" @click="instalarAhora()">
+                <i class="fas fa-download" style="margin-right:8px;"></i> Instalar ahora
+            </button>
+            <div class="install-tabs">
+                <button class="install-tab" :class="installTab==='android' ? 'active':''" @click="installTab='android'">🤖 Android</button>
+                <button class="install-tab" :class="installTab==='ios' ? 'active':''" @click="installTab='ios'">🍎 iPhone</button>
+            </div>
+            <div class="install-steps" x-show="installTab==='android'">
+                <b>Chrome:</b> abre el menú <b>⋮</b> y toca:<br>
+                • <b>Instalar app</b> — o — <b>Agregar a pantalla de inicio</b>.
+            </div>
+            <div class="install-steps" x-show="installTab==='ios'">
+                <b>Safari:</b> toca el botón <b>Compartir ⬆️</b> y luego:<br>
+                • <b>Agregar a pantalla de inicio</b> → <b>Agregar</b>.
+            </div>
+            <button @click="installModalOpen=false" style="margin-top:16px;padding:9px 26px;background:transparent;border:1px solid rgba(0,0,0,0.12);color:var(--muted);border-radius:20px;font-size:13px;cursor:pointer;font-family:var(--font);font-weight:700;">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+</div>
+
+
+<script src="scripts.js"></script>
+
+</body>
+</html>
