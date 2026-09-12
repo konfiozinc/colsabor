@@ -1,20 +1,48 @@
-const CACHE_NAME = 'colsabor-cache-v2';
+const CACHE_NAME = 'colsabor-cache-v6';
 const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/logo/no-image.webp',
+  './scripts.js',
+  './data/configuracion.json',
+  './data/productos.json',
+  './data/firebase-config.json',
+  './assets/logo/logo-colsabor.jpg',
+  './assets/logo/no-image.png',
+  './assets/productos/papas-rellenas.jpg',
+  './assets/productos/empanadas.jpg',
+  './assets/productos/arepas-de-huevo.jpg',
+  './assets/productos/desayuno-mixto.jpg',
+  './assets/productos/yuca-chicharron.jpg',
+  './assets/productos/patacon-queso.jpg',
+  './assets/productos/patacon-huevos.jpg',
+  './assets/productos/arroz-coco-frito.jpg',
+  './assets/productos/bandeja-paisa.jpg',
+  './assets/productos/pechuga-plancha.jpg',
+  './assets/productos/carne-cerdo.jpg',
+  './assets/productos/carne-bistec.jpg',
+  './assets/productos/carne-desmechada.jpg',
+  './assets/productos/higado-encebollado.jpg',
+  './assets/productos/mojarra-roja.webp',
+  './assets/productos/sierra-cojinua.jpg',
+  './assets/productos/pescado-zumo-coco.jpg',
+  './assets/productos/sopa-pescado.jpg',
+  './assets/productos/sopa-mondongo.jpg',
+  './assets/productos/sancocho-gallina.jpg',
+  './assets/productos/sancocho-costilla.jpg',
+  './assets/productos/arroz-coco.jpg',
+  './assets/productos/jugo-pina.jpg',
+  './assets/productos/jugo-maracuya.jpg',
+  './assets/productos/jugo-naranja.jpg',
+  './assets/productos/jugo-tamarindo.jpg',
+  './assets/productos/jugo-corozo.jpg',
+  './assets/productos/chocolate.jpg',
+  './assets/productos/cafe-leche.jpg',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
-  './assets/icons/favicon.png',
-  './assets/galeria/foto1.webp',
-  './assets/galeria/foto2.webp',
-  './assets/galeria/foto3.webp',
-  './assets/galeria/foto4.webp',
-  './assets/galeria/foto5.webp'
+  './assets/icons/favicon.png'
 ];
-// Nota: el logo real (assets/logo/logo-colsabor.png) se agrega al precache
-// cuando el archivo exista en el proyecto.
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

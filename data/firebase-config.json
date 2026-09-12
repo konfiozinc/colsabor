@@ -1,0 +1,11 @@
+{
+  "_instrucciones": "1) Crea un proyecto en https://console.firebase.google.com  2) Activa 'Realtime Database' (modo de prueba o con reglas)  3) En Configuración del proyecto > Tus apps > Web, copia las claves aquí.  4) Mientras apiKey/databaseURL sigan con los valores de ejemplo, la app funciona en MODO LOCAL (localStorage) sin errores.",
+
+  "apiKey": "TU_API_KEY",
+  "authDomain": "TU_PROYECTO.firebaseapp.com",
+  "databaseURL": "https://TU_PROYECTO-default-rtdb.firebaseio.com",
+  "projectId": "TU_PROYECTO",
+  "storageBucket": "TU_PROYECTO.appspot.com",
+  "messagingSenderId": "TU_SENDER_ID",
+  "appId": "TU_APP_ID"
+}

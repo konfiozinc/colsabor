@@ -1,137 +1,132 @@
-# Colsabor · Comida Sana — Menú Digital (PWA)
+# Colsabor · Comida Sana — Menú Digital + Panel Admin (PWA)
 
-Menú digital para **Colsabor**, comida sana en **El Porvenir** (papas rellenas,
-empanadas, arepas de huevo, desayunos, almuerzos, carnes, pescados, sopas,
-acompañamientos y bebidas). Aplicación de una sola página (PWA), 100% estática,
-sin servidor: los datos viven en el propio `index.html` y se persisten por
-dispositivo en `localStorage`.
+Menú digital de **Colsabor** (comida sana, El Porvenir) con **panel de
+administración** y **base de datos en Firebase Realtime Database**.
+Aplicación de una sola página (PWA), sin frameworks de servidor.
 
-## Tecnología
+- 📱 WhatsApp de pedidos: **+57 304 200 9142**
+- 🔗 URL pública: **https://konfiozinc.github.io/colsabor/**
+- ⚙️ Admin: botón 🔒 del encabezado → PIN por defecto **1234** (cambiar en `scripts.js` → `ADMIN_PIN`)
 
-- HTML5 / CSS3 / JavaScript Vanilla + Alpine.js
-- Tailwind CSS y Font Awesome vía CDN
-- PWA (`manifest.json` + `service-worker.js`)
-- Datos: semilla local en `index.html` + `localStorage` (sin Firebase ni backend)
-
-## Estructura del proyecto
+## 🧱 Estructura
 
 ```
-/assets
-  /logo        → logo-colsabor.png (coloca aquí el logo real), no-image.webp
-  /galeria     → fotos de la galería (foto1.webp … foto5.webp)
-  /videos      → videos de la sección multimedia (.mp4)
-  /icons       → íconos PWA (icon-192.png, icon-512.png, favicon.png)
-
-/data
-  productos.json      → snapshot de referencia del catálogo (NO se usa en runtime)
-  configuracion.json  → snapshot de referencia de promo/horario/categorías (NO se usa en runtime)
-
-index.html
-manifest.json
-service-worker.js
-README.md
+Colsabor/
+├── index.html                 ← interfaz (menú, carrito, reseñas, panel admin)
+├── scripts.js                 ← lógica: catálogo, admin, Firebase, PWA
+├── manifest.json              ← PWA
+├── service-worker.js          ← caché offline (v3)
+├── data/
+│   ├── configuracion.json     ← horario, promo, contacto, categorías
+│   ├── productos.json         ← espejo del catálogo (31 productos)
+│   └── firebase-config.json   ← 🔑 AQUÍ van las claves de Firebase
+├── assets/
+│   ├── logo/logo-colsabor.jpg ← logo REAL (convertido de logo.jpeg) + copia original
+│   ├── productos/             ← fotos reales: papas-rellenas.jpg, empanadas.jpg, arepas-de-huevo.jpg
+│   ├── icons/                 ← iconos PWA 192/512 + favicon (generados del logo real)
+│   └── galeria/foto1..5.webp  ← galería
+└── README.md
 ```
 
-> **Importante:** los archivos en `/data` son **solo de referencia / respaldo**.
-> La aplicación nunca los carga en runtime: la fuente de verdad del menú es
-> `productosIniciales` (constante dentro de `index.html`) y las ediciones del
-> panel admin, que se guardan en `localStorage` de cada dispositivo.
-> Si cambias el menú, actualiza **ambos** lugares: `productosIniciales` en
-> `index.html` y `data/productos.json`.
+## 🍽️ Catálogo actual (29 productos · 5 categorías)
 
-## Datos de contacto actuales
+| Categoría | # | Productos |
+|---|---|---|
+| **Desayunos** | 6 | Papas rellenas 📷 · Empanadas 📷 · Arepas de huevo 📷 · Yuca con chicharrón · Patacón con queso · Patacón con huevos pericos |
+| **Almuerzos** | 16 | Arroz de coco frito · Bandeja paisa · Pechuga a la plancha · Carne de res · Carne de cerdo a la plancha · Carne en bistec · Carne desmechada · Hígado encebollado · Mojarra roja · Sierra cojinua (lebranche) · Pescado en zumo de coco · Sopa de pescado · Sopa de mondongo · Sancocho de gallina · Sancocho de costilla de res · Arroz de coco |
+| **Comidas** | 11 | Arroz de coco frito · Bandeja paisa · Pechuga a la plancha · Carne de res · Carne de cerdo a la plancha · Carne en bistec · Carne desmechada · Hígado encebollado · Mojarra roja · Sierra cojinua (lebranche) · Arroz de coco |
+| **Jugos** | 5 | Piña · Maracuyá · Naranja · Tamarindo · Corozo |
+| **Bebidas** | 2 | Chocolate · Café con leche |
 
-- WhatsApp / teléfono: **+57 304 200 9142** (`wa.me/573042009142`)
-- Ubicación: **El Porvenir** (el pin del mapa en `index.html` apunta a la
-  ubicación real)
+📷 = tiene foto real asignada en `assets/productos/`.
 
-## Cómo funciona el menú
+**Categorías múltiples:** los 11 platos que van en *Almuerzos* **y** *Comidas* no se
+duplican: el producto tiene `categoria: "Almuerzos"` + `categorias: ["Comidas"]`,
+y el menú lo muestra en ambas. Esto se edita desde el panel admin con el campo
+**"También en…"** (categorías extra separadas por coma).
 
-1. Al abrir la app por primera vez, el menú se carga desde `productosIniciales`
-   (definido en el `<script>` de `index.html`) y se guarda en `localStorage`.
-2. Cada producto tiene: `id`, `nombre`, `precio`, `categoria`, `imagen`
-   (emoji o ruta de archivo) y `agotado`.
-3. El botón 🔒 abre el **panel admin** (protegido con PIN) para gestionar el
-   catálogo, la promoción y el horario (ver sección "Panel admin").
-4. Para cambiar el menú **por defecto para todos los visitantes**, edita
-   `productosIniciales` en `index.html` y actualiza `data/productos.json`.
+> Los precios están en `0`: el menú muestra **"Precio por confirmar"** hasta que
+> se definan desde el panel admin o en Firebase.
 
-## Panel admin (PIN)
+## 🔥 Activar Firebase (5 pasos)
 
-Se abre con el botón 🔒 del encabezado y pide un **PIN** (por defecto `1234`;
-cámbialo en la constante `ADMIN_PIN` dentro de `index.html`).
+1. Crear proyecto en <https://console.firebase.google.com> (ej: `colsabor`).
+2. **Compilación → Realtime Database → Crear base de datos** (modo de prueba para empezar).
+3. **Configuración del proyecto → Tus apps → Web (`</>`)** → copiar el objeto de configuración.
+4. Pegar las claves en **`data/firebase-config.json`** (`apiKey`, `databaseURL`, `projectId`, …).
+5. Abrir la tarjeta: el panel admin mostrará **"🔥 Firebase conectado"**.
+   Entra al panel → **Datos → ⬆️ Subir catálogo a Firebase** (primera carga).
 
-Permite, con sesión iniciada:
+**Reglas sugeridas** (Realtime Database → Reglas), para que los visitantes solo lean:
 
-- **Editar el catálogo**: cambiar nombre, categoría y precio de cada producto,
-  alternar disponibilidad (agotado/disponible) y eliminar productos.
-- **Agregar productos** nuevos (con emoji o ruta de foto) con vista previa.
-- **Editar la promoción** visible y el **horario** de atención.
-- Ver estadísticas: total de productos, agotados y categorías.
-- **Exportar el menú** como JSON (para publicarlo a todos los visitantes) y
-  **restaurar el menú original** (valores de fábrica).
+```json
+{
+  "rules": {
+    "menu": {
+      ".read": true,
+      ".write": "auth != null"
+    }
+  }
+}
+```
 
-> Los cambios del panel se guardan en `localStorage` del **dispositivo donde
-> editas** (no afectan a otros visitantes). Para que un cambio llegue a todos,
-> usa "Exportar menú" y pega el JSON en `productosIniciales` del `index.html`
-> y en `data/productos.json`.
+> Si más adelante quieres login real del admin, se activa **Authentication**
+> (correo/contraseña) y se cambia la regla `.write` a `auth.uid === "TU_UID"`.
+> Mientras tanto, el PIN del panel es solo una barrera de interfaz (el sitio es
+> estático), por eso conviene la regla de escritura autenticada.
 
-## Categorías (fijas en la app)
+**Modo local (sin Firebase):** si `firebase-config.json` sigue con los valores
+de ejemplo, la app funciona igual, guardando en `localStorage` — ideal para
+probar y para publicar mientras el cliente entrega las claves.
 
-1. Desayunos 🍳
-2. Almuerzos 🍛
-3. Carnes 🥩
-4. Pescados 🐟
-5. Sopas 🥣
-6. Acompañamientos 🍟
-7. Bebidas 🥤
+## 🧭 Qué puede hacer el admin
 
-## Imágenes de producto
+- ➕ **Agregar** productos (nombre, precio, categoría, emoji o ruta de foto).
+- ✏️ **Editar** nombre, categoría y precio en línea (se guarda al salir del campo).
+- 🚫 **Ocultar/deshabilitar** productos no disponibles (botón "Agotar" → el menú los marca AGOTADO).
+- 🗑️ **Eliminar** productos.
+- 📣 Editar **promoción** y **horario** de atención.
+- 📋 **Exportar** el catálogo en JSON y ↩️ **Restaurar** el menú original.
+- ⬆️ **Subir catálogo a Firebase** (carga masiva inicial).
 
-- Si `p.imagen` es un **emoji** (ej: `'🥔'`), la tarjeta lo muestra como ícono.
-- Si `p.imagen` es una **ruta** (ej: `assets/productos/algo.webp`), la tarjeta
-  carga esa foto; el archivo debe existir con ese nombre exacto.
-- Si falta o falla la imagen, se muestra `assets/logo/no-image.webp` como
-  respaldo (nunca un ícono roto).
+Con Firebase conectado, todos los cambios se reflejan **en vivo** para los
+visitantes (suscripción `onValue` al nodo `menu/productos`).
 
-## Logo
+## 🗂️ Nodos en Firebase
 
-La página carga `assets/logo/logo-colsabor.png`. Mientras ese archivo no
-exista, se muestra un logo de respaldo (🥗). **Coloca el logo real de Colsabor
-con ese nombre y ruta** para que aparezca en el encabezado, el modal QR y el
-precache del service worker.
+| Nodo | Contenido |
+|---|---|
+| `menu/productos/{id}` | `{ nombre, precio, categoria, imagen, agotado }` |
+| `menu/promo` | Texto de la promoción visible |
+| `menu/horario` | `{ dias: "1,2,3,4,5,6", inicio: 7, fin: 21 }` |
 
-## Galería y videos
+## 🔎 Metadatos (SEO / compartir)
 
-- Galería: `assets/galeria/foto1.webp` … `foto5.webp` (el carrusel muestra las
-  que existan y oculta automáticamente las que falten).
-- Videos: `assets/videos/*.mp4` (se ocultan solos si no existen).
+`index.html` ya apunta a Colsabor: `og:title`, `og:description`, `og:image`,
+`og:url` y `canonical` usan **https://konfiozinc.github.io/colsabor/** y el logo.
+Si publicas en otro dominio, cambia esas 4 líneas y `NEGOCIO.url` en `scripts.js`.
 
-## Carrito y pedidos por WhatsApp
+## 🎨 Marca
 
-El carrito permite agregar/quitar productos y cantidades, calcula el total y
-genera un mensaje de WhatsApp dirigido a **+57 304 200 9142** con el detalle
-del pedido.
+- Verde Colsabor `#2E7D32` / `#1B5E20`, acento `#F0B429`.
+- **Logo:** ✅ real (viene de `logo.jpeg` → `assets/logo/logo-colsabor.jpg`, 600×600 optimizado);
+  los iconos PWA (192/512/favicon) se generaron desde ese logo.
+- **Fotos de productos:** ✅ las 3 que entregó el cliente están ubicadas y conectadas:
+  `assets/productos/papas-rellenas.jpg` (Papas rellenas), `empanadas.jpg` (Empanadas),
+  `arepas-de-huevo.jpg` (Arepas de huevo). Los originales quedaron en
+  `assets/productos/_originales/`. Los demás productos usan emoji hasta que lleguen sus fotos.
+- Fuente: Montserrat.
 
-## PWA / Offline
+## 🚀 Publicar (GitHub Pages)
 
-El `index.html` registra `service-worker.js` al cargar
-(`navigator.serviceWorker.register(...)`), que precachea el shell de la app y
-los assets locales, y captura el evento `beforeinstallprompt` para ofrecer el
-botón **"Instalar ahora"** dentro del modal 📲 (con instrucciones manuales para
-Android e iPhone).
+1. Sube **todo** el contenido de la carpeta a la raíz del repositorio.
+2. Settings → Pages → Deploy from a branch → `main` / `(root)`.
+3. URL: `https://<usuario>.github.io/colsabor/` (HTTPS ⇒ PWA instalable).
 
-## Despliegue
+## ✅ Pendientes sugeridos
 
-1. Sube el contenido de esta carpeta a la raíz del repositorio/host que uses.
-2. Activa el hosting estático (GitHub Pages, Netlify, Vercel, etc.).
-3. Abre `index.html` en el navegador — no requiere configuración adicional.
-
-## Mejoras pendientes (fuera del alcance de la limpieza de marca)
-
-- Colocar el logo real en `assets/logo/logo-colsabor.png` (hoy se muestra el
-  respaldo 🥗 hasta que el archivo exista).
-- Reemplazar `https://tudominio.com/...` en las meta tags `og:*` y `canonical`
-  por la URL real de producción.
-- Cuando haya fotos reales de los platos, asignarlas a cada producto
-  (`p.imagen = 'assets/...webp'`); mientras tanto cada tarjeta muestra su emoji.
+- Pegar las claves de Firebase en `data/firebase-config.json` (y aplicar reglas).
+- Definir **precios** de los 31 productos (panel admin o Firebase).
+- Reemplazar el **logo provisional** por el definitivo.
+- Fotos reales de los platos (hoy cada producto usa su emoji).
+- Correo/redes del negocio si se quieren mostrar.

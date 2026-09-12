@@ -5,6 +5,14 @@
     "inicio": 7,
     "fin": 21
   },
-  "categorias": ["Desayunos", "Almuerzos", "Carnes", "Pescados", "Sopas", "Acompañamientos", "Bebidas"],
-  "whatsapp": "573042009142"
+  "categorias": ["Desayunos", "Almuerzos", "Comidas", "Jugos", "Bebidas"],
+  "telefono": "3042009142",
+  "whatsapp": "573042009142",
+  "ubicacion": "El Porvenir",
+  "url": "https://konfiozinc.github.io/colsabor/",
+  "redesSociales": { "instagram": "", "facebook": "", "tiktok": "" },
+  "firebase": {
+    "archivoConfig": "data/firebase-config.json",
+    "nodos": { "productos": "menu/productos", "promo": "menu/promo", "horario": "menu/horario" }
+  }
 }
