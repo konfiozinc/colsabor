@@ -183,10 +183,12 @@ document.addEventListener('alpine:init', () => {
             guardando: false,
 
             // Getters
+            get productosVisibles() { return this.productos.filter(p => !p.agotado); },
             get productosFiltrados() {
                 const q = this.busqueda.trim().toLowerCase();
-                if (!q) return this.productos;
-                return this.productos.filter(p => p.nombre.toLowerCase().includes(q));
+                const base = this.productosVisibles;
+                if (!q) return base;
+                return base.filter(p => p.nombre.toLowerCase().includes(q));
             },
             get categoriasConProductos() {
                 return this.categorias.map(cat => {
@@ -432,7 +434,7 @@ document.addEventListener('alpine:init', () => {
             async toggleAgotado(p) {
                 p.agotado = !p.agotado;
                 await this.guardarProducto(p);
-                this.mostrarToast(p.agotado ? '❌ Oculto: no disponible' : '✅ Visible: disponible');
+                this.mostrarToast(p.agotado ? '🙈 Producto ocultado del menú' : '👁️ Producto visible en el menú');
             },
             async deleteProduct(id) {
                 if (!confirm('¿Eliminar este producto?')) return;

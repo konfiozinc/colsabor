@@ -232,7 +232,7 @@
         <div x-show="adminAuthenticated">
             <div class="admin-stats">
                 <span class="admin-chip">📦 <span x-text="productos.length"></span> productos</span>
-                <span class="admin-chip">🚫 <span x-text="totalAgotados()"></span> agotados</span>
+                <span class="admin-chip">🚫 <span x-text="totalAgotados()"></span> ocultos</span>
                 <span class="admin-chip">🗂️ <span x-text="categorias.length"></span> categorías</span>
                 <span class="admin-chip" :style="fuente==='firebase' ? 'border-color:#2E7D32;color:#1B5E20;' : 'border-color:#c9a227;color:#8a6d00;'" x-text="textoFuente"></span>
             </div>
@@ -242,7 +242,7 @@
                 <h4>🍽️ Editar catálogo</h4>
                 <div class="admin-list">
                     <template x-for="p in productos" :key="p.id">
-                        <div class="product-item">
+                        <div class="product-item" :style="p.agotado ? 'opacity:.55' : ''">
                             <div class="product-emoji">
                                 <template x-if="esImagenEmoji(p.imagen)"><span x-text="p.imagen"></span></template>
                                 <template x-if="!esImagenEmoji(p.imagen)"><img :src="p.imagen || 'assets/logo/no-image.png'" loading="lazy" @error="$event.target.style.display='none'"></template>
@@ -253,7 +253,7 @@
                             </select>
                             <input class="admin-input" :value="(p.categorias || []).join(', ')" @change="actualizarCategoriasExtra(p, $event.target.value)" title="También aparece en (categorías extra separadas por coma)" placeholder="También en…" style="width:104px;font-size:11px;">
                             <input class="admin-input" type="number" x-model.number="p.precio" @change="sincronizarProducto(p)" title="Precio" style="width:76px;">
-                            <button class="admin-btn btn-mini" :class="p.agotado ? 'btn-accion' : 'btn-peligro'" @click="toggleAgotado(p)" x-text="p.agotado ? 'Disponible' : 'Agotar'"></button>
+                            <button class="admin-btn btn-mini" :class="p.agotado ? 'btn-accion' : 'btn-peligro'" @click="toggleAgotado(p)" :title="p.agotado ? 'Mostrar en el menú' : 'Ocultar del menú (agotado)'" x-text="p.agotado ? 'Mostrar' : 'Ocultar'"></button>
                             <button class="admin-btn btn-mini btn-peligro" @click="deleteProduct(p.id)" title="Eliminar">🗑️</button>
                         </div>
                     </template>
