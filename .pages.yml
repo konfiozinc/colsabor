@@ -1,0 +1,50 @@
+# Pages CMS — edición visual del menú digital
+# Pages CMS lee este archivo automáticamente al conectar el repositorio.
+media:
+  input: assets/productos
+  output: assets/productos
+
+content:
+  - name: productos
+    label: Productos
+    type: file
+    path: data/productos.json
+    fields:
+      - name: productos
+        label: Lista de productos
+        type: object
+        list: true
+        fields:
+          - { name: nombre, label: Nombre, type: text }
+          - { name: categoria, label: Categoría, type: select, options: [Desayunos, Almuerzos, Comidas, Jugos, Bebidas] }
+          - { name: categorias, label: Categorías extra (separadas por coma), type: list, item_type: text }
+          - { name: precio, label: Precio (0 = "Precio por confirmar"), type: number }
+          - { name: imagen, label: Imagen, type: image }
+          - { name: etiquetas, label: Etiquetas (emojis: 🌱🌶️⏱️🔥🏷️), type: list, item_type: text }
+          - { name: agotado, label: Agotado (ocultar del menú), type: boolean }
+
+  - name: configuracion
+    label: Configuración
+    type: file
+    path: data/configuracion.json
+    fields:
+      - { name: promocion, label: Promoción / aviso, type: text }
+      - name: horario
+        label: Horario de atención
+        type: object
+        fields:
+          - { name: dias, label: Días (0=Domingo, 1=Lunes… 6=Sábado, separados por coma), type: text }
+          - { name: inicio, label: Hora de apertura (0-23), type: number }
+          - { name: fin, label: Hora de cierre (0-23), type: number }
+      - { name: categorias, label: Categorías visibles (orden), type: list, item_type: text }
+      - { name: telefono, label: Teléfono (solo números), type: text }
+      - { name: whatsapp, label: WhatsApp (57 + número), type: text }
+      - { name: ubicacion, label: Ubicación / barrio, type: text }
+      - { name: url, label: Enlace público, type: text }
+      - name: redesSociales
+        label: Redes sociales
+        type: object
+        fields:
+          - { name: instagram, label: Instagram (usuario o URL), type: text }
+          - { name: facebook, label: Facebook (usuario o URL), type: text }
+          - { name: tiktok, label: TikTok (usuario o URL), type: text }

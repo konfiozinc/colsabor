@@ -129,6 +129,11 @@
                                     <div class="img-emoji" role="img" :aria-label="p.nombre" x-text="p.imagen"></div>
                                 </template>
                                 <span class="badge-agotado" x-show="p.agotado">AGOTADO</span>
+                                <div class="badges" x-show="Array.isArray(p.etiquetas) && p.etiquetas.length">
+                                    <template x-for="e in p.etiquetas" :key="e">
+                                        <span class="badge-etiqueta" x-text="e"></span>
+                                    </template>
+                                </div>
                                 <div class="name" x-text="p.nombre"></div>
                                 <div class="price" x-text="Number(p.precio) > 0 ? '$' + parseInt(p.precio).toLocaleString('es-CO') : 'Precio por confirmar'"></div>
                                 <button class="btn-pedido" :disabled="p.agotado"

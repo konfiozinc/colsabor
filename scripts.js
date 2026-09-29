@@ -14,7 +14,7 @@ const NEGOCIO = {
     url: 'https://konfiozinc.github.io/colsabor/'
 };
 
-const CATEGORIAS = ['Desayunos', 'Almuerzos', 'Comidas', 'Jugos', 'Bebidas'];
+let CATEGORIAS = ['Desayunos', 'Almuerzos', 'Comidas', 'Jugos', 'Bebidas'];
 const ADMIN_PIN = '1234'; // PIN del panel admin — cámbialo aquí.
 
 const EMOJIS_CATEGORIA = {
@@ -45,7 +45,8 @@ function productosAObjeto(lista) {
         obj[p.id] = {
             nombre: p.nombre, precio: p.precio, categoria: p.categoria,
             imagen: p.imagen, agotado: !!p.agotado,
-            categorias: Array.isArray(p.categorias) ? p.categorias : []
+            categorias: Array.isArray(p.categorias) ? p.categorias : [],
+            etiquetas: Array.isArray(p.etiquetas) ? p.etiquetas : []
         };
     });
     return obj;
@@ -58,6 +59,7 @@ function objetoAProductos(obj) {
             id: id, nombre: v.nombre || '', precio: Number(v.precio) || 0,
             categoria: v.categoria || CATEGORIAS[0], imagen: v.imagen || '🍽️',
             categorias: Array.isArray(v.categorias) ? v.categorias : [],
+            etiquetas: Array.isArray(v.etiquetas) ? v.etiquetas : [],
             agotado: !!v.agotado
         };
     });
@@ -210,12 +212,50 @@ document.addEventListener('alpine:init', () => {
             },
 
             // ── Inicialización ──
+            // 1) Cargar contenido base desde Pages CMS (data/*.json)
+            async cargarContenidoBase() {
+                try {
+                    const resp = await fetch('data/configuracion.json', { cache: 'no-store' });
+                    if (resp.ok) {
+                        const cfg = await resp.json();
+                        if (cfg.promocion) this.promoText = cfg.promocion;
+                        if (Array.isArray(cfg.categorias) && cfg.categorias.length) this.categorias = cfg.categorias;
+                        if (cfg.horario && cfg.horario.dias) { this.adminHorario = cfg.horario; this.actualizarTextoHorario(); }
+                        if (cfg.telefono) { NEGOCIO.telefono = cfg.telefono; this.telefono = cfg.telefono; }
+                        if (cfg.whatsapp) NEGOCIO.whatsapp = cfg.whatsapp;
+                        if (cfg.ubicacion) { NEGOCIO.ubicacion = cfg.ubicacion; this.ubicacion = cfg.ubicacion; }
+                        if (cfg.url) { NEGOCIO.url = cfg.url; this.urlPublica = cfg.url; }
+                    }
+                } catch (e) { console.warn('[Colsabor] No se pudo leer configuracion.json:', e); }
+
+                try {
+                    const resp = await fetch('data/productos.json', { cache: 'no-store' });
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        const lista = Array.isArray(data) ? data : (data.productos || []);
+                        if (lista.length) {
+                            this.productos = lista.map(p => ({
+                                id: p.id, nombre: p.nombre, precio: Number(p.precio) || 0,
+                                categoria: p.categoria, imagen: p.imagen,
+                                categorias: Array.isArray(p.categorias) ? p.categorias : [],
+                                etiquetas: Array.isArray(p.etiquetas) ? p.etiquetas : [],
+                                agotado: !!p.agotado
+                            }));
+                            localStorage.setItem('colsabor_productos_v2', JSON.stringify(this.productos));
+                        }
+                    }
+                } catch (e) { console.warn('[Colsabor] No se pudo leer productos.json:', e); }
+            },
             async initApp() {
-                // 1) Datos locales de respaldo
+                // 1) Contenido base desde Pages CMS
+                await this.cargarContenidoBase();
+
+                // 2) Datos locales de respaldo (solo si el JSON no cargó productos)
                 const stored = localStorage.getItem('colsabor_productos_v2');
-                if (stored) {
+                if (!this.productos.length && stored) {
                     try { this.productos = JSON.parse(stored); } catch (e) { this.productos = copiaInicial(); }
-                } else {
+                }
+                if (!this.productos.length) {
                     this.productos = copiaInicial();
                     localStorage.setItem('colsabor_productos_v2', JSON.stringify(this.productos));
                 }
@@ -234,7 +274,7 @@ document.addEventListener('alpine:init', () => {
                     if (inp) inp.removeAttribute('readonly');
                 }, 500);
 
-                // 2) Firebase (si está configurado)
+                // 3) Firebase (si está configurado) — sobrescribe en vivo
                 const ok = await initFirebase();
                 this.fuente = ok ? 'firebase' : 'local';
                 this.fbError = FB.error || '';
@@ -267,7 +307,8 @@ document.addEventListener('alpine:init', () => {
                         await fbSet('menu/productos/' + p.id, {
                             nombre: p.nombre, precio: Number(p.precio) || 0,
                             categoria: p.categoria, imagen: p.imagen, agotado: !!p.agotado,
-                            categorias: Array.isArray(p.categorias) ? p.categorias : []
+                            categorias: Array.isArray(p.categorias) ? p.categorias : [],
+                            etiquetas: Array.isArray(p.etiquetas) ? p.etiquetas : []
                         });
                     }
                     localStorage.setItem('colsabor_productos_v2', JSON.stringify(this.productos));
@@ -452,6 +493,8 @@ document.addEventListener('alpine:init', () => {
                     precio: parseInt(this.newProduct.precio) || 0,
                     categoria: this.newProduct.categoria,
                     imagen: this.newProduct.imagen || '🍽️',
+                    categorias: [],
+                    etiquetas: [],
                     agotado: false
                 };
                 this.productos.push(nuevo);

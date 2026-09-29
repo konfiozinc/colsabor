@@ -10,9 +10,5 @@
   "whatsapp": "573042009142",
   "ubicacion": "El Porvenir",
   "url": "https://konfiozinc.github.io/colsabor/",
-  "redesSociales": { "instagram": "", "facebook": "", "tiktok": "" },
-  "firebase": {
-    "archivoConfig": "data/firebase-config.json",
-    "nodos": { "productos": "menu/productos", "promo": "menu/promo", "horario": "menu/horario" }
-  }
+  "redesSociales": { "instagram": "", "facebook": "", "tiktok": "" }
 }

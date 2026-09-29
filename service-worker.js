@@ -1,4 +1,4 @@
-const CACHE_NAME = 'colsabor-cache-v6';
+const CACHE_NAME = 'colsabor-cache-v7';
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -41,7 +41,6 @@ const PRECACHE_URLS = [
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
   './assets/icons/favicon.png'
-];
 ];
 
 self.addEventListener('install', (event) => {
