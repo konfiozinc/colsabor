@@ -46,7 +46,9 @@ function productosAObjeto(lista) {
             nombre: p.nombre, precio: p.precio, categoria: p.categoria,
             imagen: p.imagen, agotado: !!p.agotado,
             categorias: Array.isArray(p.categorias) ? p.categorias : [],
-            etiquetas: Array.isArray(p.etiquetas) ? p.etiquetas : []
+            etiquetas: Array.isArray(p.etiquetas) ? p.etiquetas : [],
+            tiempo: Number(p.tiempo) || 0,
+            destacado: !!p.destacado
         };
     });
     return obj;
@@ -60,6 +62,8 @@ function objetoAProductos(obj) {
             categoria: v.categoria || CATEGORIAS[0], imagen: v.imagen || '🍽️',
             categorias: Array.isArray(v.categorias) ? v.categorias : [],
             etiquetas: Array.isArray(v.etiquetas) ? v.etiquetas : [],
+            tiempo: Number(v.tiempo) || 0,
+            destacado: !!v.destacado,
             agotado: !!v.agotado
         };
     });
@@ -200,6 +204,9 @@ document.addEventListener('alpine:init', () => {
                     return { nombre: cat, emoji: this.emojisCategoria[cat] || '🍽️', productos, count: productos.length };
                 });
             },
+            get destacados() {
+                return this.productosVisibles.filter(p => !!p.destacado);
+            },
             get totalItems() { return this.carrito.reduce((s, i) => s + i.cantidad, 0); },
             get totalPrecio() { return this.carrito.reduce((s, i) => s + i.precio * i.cantidad, 0); },
             get promedioEstrellas() {
@@ -239,6 +246,8 @@ document.addEventListener('alpine:init', () => {
                                 categoria: p.categoria, imagen: p.imagen,
                                 categorias: Array.isArray(p.categorias) ? p.categorias : [],
                                 etiquetas: Array.isArray(p.etiquetas) ? p.etiquetas : [],
+                                tiempo: Number(p.tiempo) || 0,
+                                destacado: !!p.destacado,
                                 agotado: !!p.agotado
                             }));
                             localStorage.setItem('colsabor_productos_v2', JSON.stringify(this.productos));
@@ -495,6 +504,8 @@ document.addEventListener('alpine:init', () => {
                     imagen: this.newProduct.imagen || '🍽️',
                     categorias: [],
                     etiquetas: [],
+                    tiempo: 0,
+                    destacado: false,
                     agotado: false
                 };
                 this.productos.push(nuevo);

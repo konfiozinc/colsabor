@@ -249,6 +249,20 @@
             border-radius: 30px;
             line-height: 1.4;
         }
+        .menu-card .badge-tiempo {
+            display: inline-block;
+            align-self: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(249, 115, 22, 0.85);
+            padding: 2px 10px;
+            border-radius: 30px;
+            margin: 4px 10px 0;
+        }
+        .destacados-section {
+            margin-bottom: 16px;
+        }
         .menu-card .btn-pedido {
             background: var(--primary);
             color: var(--secondary);
