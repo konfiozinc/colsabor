@@ -113,32 +113,30 @@ const productosIniciales = [
 ];
 
 // ══════════════════════════════════════════════════════════════
-//  FIREBASE REALTIME DATABASE
-//  Configuración en: data/firebase-config.json
-//  Si no hay claves válidas, la app funciona en MODO LOCAL
-//  (localStorage) sin perder ninguna función del panel admin.
+//  FIREBASE REALTIME DATABASE (compat SDK — mismo patrón que EL TITI)
+//  Proyecto: el-titi-menu · ruta: colsabor/
+//  Si Firebase no está disponible, la app funciona en MODO LOCAL.
 // ══════════════════════════════════════════════════════════════
-const FB = { activo: false, app: null, db: null, mods: null, cfg: null, error: '' };
+const firebaseConfig = {
+    apiKey: "AIzaSyDHWE3OJMspi_z0CKPv8mjvjI7igum98rs",
+    authDomain: "el-titi-menu.firebaseapp.com",
+    databaseURL: "https://el-titi-menu-default-rtdb.firebaseio.com",
+    projectId: "el-titi-menu",
+    storageBucket: "el-titi-menu.firebasestorage.app",
+    messagingSenderId: "903648110789",
+    appId: "1:903648110789:web:6ac58748862dfeb5a568ac"
+};
 
-async function initFirebase() {
+const FB = { activo: false, db: null, error: '' };
+
+function initFirebase() {
     try {
-        const resp = await fetch('data/firebase-config.json', { cache: 'no-store' });
-        if (!resp.ok) { FB.error = 'sin archivo de configuración'; return false; }
-        const cfg = await resp.json();
-        if (!cfg || !cfg.apiKey || !cfg.databaseURL || /TU_|PEGA_|XXXX/i.test(cfg.apiKey + cfg.databaseURL)) {
-            FB.error = 'configuración pendiente'; return false;
-        }
-        const [appMod, dbMod] = await Promise.all([
-            import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
-            import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js')
-        ]);
-        FB.app = appMod.initializeApp(cfg);
-        FB.db = dbMod.getDatabase(FB.app);
-        FB.mods = dbMod;
-        FB.cfg = cfg;
+        if (typeof firebase === 'undefined') { FB.error = 'Firebase SDK no cargado'; return false; }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        FB.db = firebase.database();
         FB.activo = true;
         FB.error = '';
-        console.info('[Colsabor] Firebase conectado:', cfg.projectId || cfg.databaseURL);
+        console.info('[Colsabor] Firebase conectado (colsabor/)');
         return true;
     } catch (e) {
         FB.error = e && e.message ? e.message : 'error desconocido';
@@ -146,11 +144,11 @@ async function initFirebase() {
         return false;
     }
 }
-function fbRef(path) { return FB.mods.ref(FB.db, path); }
-async function fbLeer(path) { const s = await FB.mods.get(fbRef(path)); return s.exists() ? s.val() : null; }
-async function fbSet(path, valor) { await FB.mods.set(fbRef(path), valor); }
-async function fbDel(path) { await FB.mods.remove(fbRef(path)); }
-function fbOn(path, cb) { FB.mods.onValue(fbRef(path), cb); }
+function fbRef(path) { return FB.db.ref(path); }
+async function fbLeer(path) { const s = await fbRef(path).once('value'); return s.exists() ? s.val() : null; }
+async function fbSet(path, valor) { await fbRef(path).set(valor); }
+async function fbDel(path) { await fbRef(path).remove(); }
+function fbOn(path, cb) { fbRef(path).on('value', cb); }
 
 // ── Estado global (Alpine) ──
 document.addEventListener('alpine:init', () => {
@@ -215,7 +213,7 @@ document.addEventListener('alpine:init', () => {
             },
             get textoFuente() {
                 if (this.fuente === 'firebase') return '🔥 Firebase conectado (cambios en vivo)';
-                return '💾 Modo local (configura Firebase en data/firebase-config.json)';
+                return '💾 Modo local (sin conexión a Firebase)';
             },
 
             // ── Inicialización ──
@@ -290,17 +288,17 @@ document.addEventListener('alpine:init', () => {
                 if (!ok) return;
 
                 // Catálogo en vivo
-                fbOn('menu/productos', (snap) => {
+                fbOn('colsabor/productos', (snap) => {
                     const lista = objetoAProductos(snap.val());
                     if (lista.length) {
-                        this.productos = lista;
+                        this.productos = JSON.parse(JSON.stringify(lista));
                         localStorage.setItem('colsabor_productos_v2', JSON.stringify(lista));
                     }
                 });
-                fbOn('menu/promo', (snap) => {
+                fbOn('colsabor/promo', (snap) => {
                     if (snap.exists()) { this.promoText = snap.val(); localStorage.setItem('colsabor_promo', this.promoText); }
                 });
-                fbOn('menu/horario', (snap) => {
+                fbOn('colsabor/horario', (snap) => {
                     if (snap.exists()) {
                         const h = snap.val();
                         if (h && h.dias) { this.adminHorario = h; this.actualizarTextoHorario(); this.actualizarEstado(); }
@@ -313,7 +311,7 @@ document.addEventListener('alpine:init', () => {
                 this.guardando = true;
                 try {
                     if (FB.activo) {
-                        await fbSet('menu/productos/' + p.id, {
+                        await fbSet('colsabor/productos/' + p.id, {
                             nombre: p.nombre, precio: Number(p.precio) || 0,
                             categoria: p.categoria, imagen: p.imagen, agotado: !!p.agotado,
                             categorias: Array.isArray(p.categorias) ? p.categorias : [],
@@ -330,16 +328,16 @@ document.addEventListener('alpine:init', () => {
             async persistirProductos() {
                 localStorage.setItem('colsabor_productos_v2', JSON.stringify(this.productos));
                 if (FB.activo) {
-                    try { await fbSet('menu/productos', productosAObjeto(this.productos)); }
+                    try { await fbSet('colsabor/productos', productosAObjeto(this.productos)); }
                     catch (e) { this.mostrarToast('⚠️ Error sincronizando con Firebase'); }
                 }
             },
             async subirCatalogo() {
                 if (!FB.activo) { this.mostrarToast('⚠️ Firebase no está configurado'); return; }
-                if (!confirm('¿Subir el catálogo actual a Firebase? Se reemplaza lo que haya en menu/productos.')) return;
+                if (!confirm('¿Subir el catálogo actual a Firebase? Se reemplaza lo que haya en colsabor/productos.')) return;
                 this.guardando = true;
                 try {
-                    await fbSet('menu/productos', productosAObjeto(this.productos));
+                    await fbSet('colsabor/productos', productosAObjeto(this.productos));
                     this.mostrarToast('⬆️ Catálogo subido a Firebase');
                 } catch (e) { this.mostrarToast('⚠️ Error al subir el catálogo'); }
                 this.guardando = false;
@@ -416,7 +414,7 @@ document.addEventListener('alpine:init', () => {
                 if (dias.length === 0) { this.mostrarToast('Debe ingresar al menos un día'); return; }
                 this.adminHorario.dias = dias.join(',');
                 localStorage.setItem('colsabor_horario', JSON.stringify(this.adminHorario));
-                if (FB.activo) { try { await fbSet('menu/horario', this.adminHorario); } catch (e) {} }
+                if (FB.activo) { try { await fbSet('colsabor/horario', this.adminHorario); } catch (e) {} }
                 this.actualizarTextoHorario();
                 this.actualizarEstado();
                 this.mostrarToast('Horario guardado');
@@ -490,7 +488,7 @@ document.addEventListener('alpine:init', () => {
                 if (!confirm('¿Eliminar este producto?')) return;
                 this.productos = this.productos.filter(p => p.id !== id);
                 localStorage.setItem('colsabor_productos_v2', JSON.stringify(this.productos));
-                if (FB.activo) { try { await fbDel('menu/productos/' + id); } catch (e) {} }
+                if (FB.activo) { try { await fbDel('colsabor/productos/' + id); } catch (e) {} }
                 this.mostrarToast('🗑️ Producto eliminado');
             },
             async addProduct() {
@@ -550,7 +548,7 @@ document.addEventListener('alpine:init', () => {
             totalAgotados() { return this.productos.filter(p => p.agotado).length; },
             async guardarPromo() {
                 localStorage.setItem('colsabor_promo', this.promoText);
-                if (FB.activo) { try { await fbSet('menu/promo', this.promoText); } catch (e) {} }
+                if (FB.activo) { try { await fbSet('colsabor/promo', this.promoText); } catch (e) {} }
                 this.mostrarToast('💾 Promoción guardada');
             },
             async restablecerMenu() {

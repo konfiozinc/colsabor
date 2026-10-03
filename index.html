@@ -22,6 +22,9 @@
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -350,7 +353,7 @@
                 <div class="admin-row" style="margin-bottom:6px;">
                     <button class="admin-btn btn-accion" @click="subirCatalogo()" style="flex:1;" :disabled="guardando">⬆️ Subir catálogo a Firebase</button>
                 </div>
-                <p class="admin-sub">🔥 <b>Firebase</b>: pega tus claves en <b>data/firebase-config.json</b> y este panel guardará en la nube (productos, promo y horario en <b>menu/…</b>). Mientras no haya claves, todo se guarda localmente sin errores. Usa "Subir catálogo" la primera vez para cargar el menú en la nube.</p>
+                <p class="admin-sub">🔥 <b>Firebase</b>: conectado al proyecto <b>el-titi-menu</b> (ruta <b>colsabor/…</b>). Los cambios de productos, promo y horario se guardan en la nube y se reflejan en vivo en el menú.</p>
             </div>
         </div>
     </div>
