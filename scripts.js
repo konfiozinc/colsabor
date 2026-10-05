@@ -416,13 +416,13 @@ document.addEventListener('alpine:init', () => {
                 // 4) Abrir WhatsApp con el mensaje + datos del cliente
                 let msg = '🍽️ *PEDIDO — Colsabor · Comida sana*\n';
                 msg += '👤 ' + c.nombre + ' · ' + c.telefono + '\n';
-                msg += '━━━━━━━━━━━━━━━━━━━━\n';
+                msg += '\n';
                 this.carrito.forEach(i => {
                     msg += i.emoji + ' *' + i.nombre + '*\n   Cantidad: ' + i.cantidad + '\n';
                     if (i.precio > 0) msg += '   Precio: $' + (i.precio * i.cantidad).toLocaleString('es-CO') + '\n';
                     msg += '\n';
                 });
-                msg += '━━━━━━━━━━━━━━━━━━━━\n';
+                msg += '\n';
                 msg += '💰 *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
                 msg += '📍 Dirección: ' + c.direccion + '\n';
                 msg += '💳 Pago: ' + c.metodoPago + '\n';
