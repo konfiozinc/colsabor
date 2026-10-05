@@ -380,11 +380,11 @@ document.addEventListener('alpine:init', () => {
                 // 1) Número de pedido incremental (transacción atómica)
                 let numeroPedido = 'CLS-000';
                 try {
-                    const res = await fbRef('colsabor/meta/contadorPedidos').transaction(v => (v || 0) + 1);
+                    const res = await fbRef('colsabor/meta/contadorPedidos').transaction((v) => (v || 0) + 1);
                     if (res && res.snapshot && res.snapshot.val()) {
                         numeroPedido = 'CLS-' + String(res.snapshot.val()).padStart(3, '0');
                     }
-                } catch (e) { console.warn('[Colsabor] contador falló:', e); }
+                } catch (e) { console.warn('[Colsabor] contador falló, se usa por defecto:', e); }
 
                 // 2) Código corto de consulta pública
                 const codigoConsulta = Math.random().toString(36).slice(2, 6).toUpperCase();
@@ -413,24 +413,21 @@ document.addEventListener('alpine:init', () => {
                     this.mostrarToast('⚠️ No se guardó en el panel, pero continuamos por WhatsApp');
                 }
 
-                // 4) Abrir WhatsApp con el mensaje + datos del cliente
-                let msg = '\u{1F37D}\u{FE0F} *PEDIDO \u2014 Colsabor \u00B7 Comida sana*\n';
+                // 4) Abrir WhatsApp con el mensaje de siempre + datos del cliente
+                let msg = '\u{1F354} *PEDIDO - Colsabor Comida sana*\n';
                 msg += '\u{1F464} ' + c.nombre + ' \u00B7 ' + c.telefono + '\n';
                 msg += '\n';
                 this.carrito.forEach(i => {
-                    msg += i.emoji + ' *' + i.nombre + '*\n   Cantidad: ' + i.cantidad + '\n';
-                    if (i.precio > 0) msg += '   Precio: $' + (i.precio * i.cantidad).toLocaleString('es-CO') + '\n';
-                    msg += '\n';
+                    msg += i.emoji + ' *' + i.nombre + '*\n   Cantidad: ' + i.cantidad + '\n   Precio: $' + (i.precio * i.cantidad).toLocaleString('es-CO') + '\n\n';
                 });
-                msg += '\n';
-                msg += '\u{1F4B0} *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
+                msg += '\n\u{1F4B0} *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
                 msg += '\u{1F4CD} Direcci\u00F3n: ' + c.direccion + '\n';
                 msg += '\u{1F4B3} Pago: ' + c.metodoPago + '\n';
                 if (c.notas) msg += '\u{1F4DD} Notas: ' + c.notas + '\n';
                 msg += '\n\u{1F194} Pedido ' + numeroPedido;
-                window.open('https://wa.me/' + NEGOCIO.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
+                window.location.href = 'whatsapp://send?phone=57' + this.telefono + '&text=' + encodeURIComponent(msg);
 
-                // 5) Reset
+                // 5) Reset del estado
                 this.carrito = [];
                 this.checkoutOpen = false;
                 this.checkout = { nombre: '', telefono: '', direccion: '', metodoPago: 'Efectivo', notas: '' };
