@@ -163,6 +163,10 @@ document.addEventListener('alpine:init', () => {
             emojisCategoria: EMOJIS_CATEGORIA,
             carrito: [],
             carritoOpen: false,
+            checkoutOpen: false,
+            checkout: { nombre: '', telefono: '', direccion: '', metodoPago: 'Efectivo', notas: '' },
+            enviandoPedido: false,
+            metodosPago: ['Efectivo', 'Nequi', 'Daviplata', 'Transferencia'],
             reseñas: [],
             nuevaReseña: { autor: '', texto: '', estrellas: 0 },
             adminMode: false,
@@ -359,17 +363,78 @@ document.addEventListener('alpine:init', () => {
             vaciarCarrito() { if (confirm('¿Vaciar el carrito?')) this.carrito = []; },
             enviarPedido() {
                 if (!this.carrito.length) return;
-                let msg = '🍽️ *PEDIDO — Colsabor · Comida sana*\n━━━━━━━━━━━━━━━━━━━━\n';
+                this.carritoOpen = false;
+                this.checkoutOpen = true;
+            },
+
+            async confirmarPedido() {
+                if (!this.carrito.length) return;
+                const c = this.checkout;
+                if (!c.nombre.trim() || !c.telefono.trim() || !c.direccion.trim()) {
+                    this.mostrarToast('⚠️ Completa nombre, teléfono y dirección');
+                    return;
+                }
+                if (this.enviandoPedido) return;
+                this.enviandoPedido = true;
+
+                // 1) Número de pedido incremental (transacción atómica)
+                let numeroPedido = 'CLS-000';
+                try {
+                    const res = await fbRef('colsabor/meta/contadorPedidos').transaction(v => (v || 0) + 1);
+                    if (res && res.snapshot && res.snapshot.val()) {
+                        numeroPedido = 'CLS-' + String(res.snapshot.val()).padStart(3, '0');
+                    }
+                } catch (e) { console.warn('[Colsabor] contador falló:', e); }
+
+                // 2) Código corto de consulta pública
+                const codigoConsulta = Math.random().toString(36).slice(2, 6).toUpperCase();
+
+                // 3) Guardar el pedido en RTDB (colsabor/pedidos)
+                const pedido = {
+                    numeroPedido,
+                    codigoConsulta,
+                    cliente: {
+                        nombre: c.nombre.trim(),
+                        telefono: c.telefono.trim(),
+                        direccion: c.direccion.trim(),
+                        metodoPago: c.metodoPago,
+                        notas: c.notas.trim()
+                    },
+                    items: this.carrito.map(i => ({ productoId: i.id, nombre: i.nombre, precio: i.precio, cantidad: i.cantidad })),
+                    total: this.totalPrecio,
+                    estado: 'recibido',
+                    fechaCreacion: firebase.database.ServerValue.TIMESTAMP,
+                    fechaActualizacion: firebase.database.ServerValue.TIMESTAMP
+                };
+                try {
+                    await fbRef('colsabor/pedidos').push(pedido);
+                } catch (e) {
+                    console.error('[Colsabor] No se pudo guardar el pedido:', e);
+                    this.mostrarToast('⚠️ No se guardó en el panel, pero continuamos por WhatsApp');
+                }
+
+                // 4) Abrir WhatsApp con el mensaje + datos del cliente
+                let msg = '🍽️ *PEDIDO — Colsabor · Comida sana*\n';
+                msg += '🪪 ' + c.nombre + ' · 📞 ' + c.telefono + '\n';
+                msg += '━━━━━━━━━━━━━━━━━━━━\n';
                 this.carrito.forEach(i => {
                     msg += i.emoji + ' *' + i.nombre + '*\n   Cantidad: ' + i.cantidad + '\n';
                     if (i.precio > 0) msg += '   Precio: $' + (i.precio * i.cantidad).toLocaleString('es-CO') + '\n';
                     msg += '\n';
                 });
                 msg += '━━━━━━━━━━━━━━━━━━━━\n';
-                msg += this.totalPrecio > 0 ? '💰 *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n\n' : '';
-                msg += '📍 Por favor confirma tu dirección.';
+                msg += '💰 *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
+                msg += '📍 Dirección: ' + c.direccion + '\n';
+                msg += '💳 Pago: ' + c.metodoPago + '\n';
+                if (c.notas) msg += '📝 Notas: ' + c.notas + '\n';
+                msg += '\n🆔 Pedido ' + numeroPedido;
                 window.open('https://wa.me/' + NEGOCIO.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
-                this.carritoOpen = false;
+
+                // 5) Reset
+                this.carrito = [];
+                this.checkoutOpen = false;
+                this.checkout = { nombre: '', telefono: '', direccion: '', metodoPago: 'Efectivo', notas: '' };
+                this.enviandoPedido = false;
             },
 
             // ── Reseñas ──
