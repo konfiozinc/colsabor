@@ -415,7 +415,7 @@ document.addEventListener('alpine:init', () => {
 
                 // 4) Abrir WhatsApp con el mensaje + datos del cliente
                 let msg = '🍽️ *PEDIDO — Colsabor · Comida sana*\n';
-                msg += '🪪 ' + c.nombre + ' · 📞 ' + c.telefono + '\n';
+                msg += '👤 ' + c.nombre + ' · ' + c.telefono + '\n';
                 msg += '━━━━━━━━━━━━━━━━━━━━\n';
                 this.carrito.forEach(i => {
                     msg += i.emoji + ' *' + i.nombre + '*\n   Cantidad: ' + i.cantidad + '\n';
