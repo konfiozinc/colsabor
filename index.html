@@ -39,10 +39,32 @@
     
 <link rel="stylesheet" href="styles.css">
 
+<style>
+/* ===== BANNER: TIENDA CERRADA (interruptor ON/OFF) ===== */
+.tienda-cerrada-banner{
+    position:sticky;top:0;z-index:60;
+    display:flex;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#1B5E20,#2E7D32);
+    color:#fff;padding:13px 16px;
+    font-family:Montserrat,sans-serif;font-weight:700;font-size:.88rem;line-height:1.35;
+    box-shadow:0 4px 18px rgba(0,0,0,.28);
+}
+.tienda-cerrada-banner .tcb-icon{font-size:1.15rem;flex-shrink:0}
+.tienda-cerrada-banner .tcb-msg{flex:1}
+.btn-pedido:disabled{cursor:not-allowed}
+.btn-enviar-pedido:disabled{opacity:.55;cursor:not-allowed}
+</style>
+
 </head>
 <body>
 
 <div id="app" x-data="appData" x-init="initApp()" class="card-container">
+
+    <!-- ===== BANNER: TIENDA CERRADA ===== -->
+    <div class="tienda-cerrada-banner" x-show="tiendaCerrada" x-cloak>
+        <span class="tcb-icon">🔔</span>
+        <span class="tcb-msg" x-text="mensajeCierre"></span>
+    </div>
 
     <!-- ===== HERO ===== -->
     <div class="hero">
@@ -144,9 +166,9 @@
                         <span class="badge-tiempo" x-text="Number(p.tiempo) > 0 ? '⏱ ' + p.tiempo + ' min' : '⏱ Por confirmar'"></span>
                         <div class="name" x-text="p.nombre"></div>
                         <div class="price" x-text="Number(p.precio) > 0 ? '$' + parseInt(p.precio).toLocaleString('es-CO') : 'Precio por confirmar'"></div>
-                        <button class="btn-pedido" :disabled="p.agotado"
-                            @click="p.agotado ? null : agregarAlCarrito(p)">
-                            <span x-text="p.agotado ? '❌ AGOTADO' : '🛒 Agregar'"></span>
+                        <button class="btn-pedido" :disabled="p.agotado || tiendaCerrada"
+                            @click="(p.agotado || tiendaCerrada) ? null : agregarAlCarrito(p)">
+                            <span x-text="p.agotado ? '❌ AGOTADO' : (tiendaCerrada ? '🔒 Cerrado' : '🛒 Agregar')"></span>
                         </button>
                     </div>
                 </template>
@@ -180,9 +202,9 @@
                                 <span class="badge-tiempo" x-text="Number(p.tiempo) > 0 ? '⏱ ' + p.tiempo + ' min' : '⏱ Por confirmar'"></span>
                                 <div class="name" x-text="p.nombre"></div>
                                 <div class="price" x-text="Number(p.precio) > 0 ? '$' + parseInt(p.precio).toLocaleString('es-CO') : 'Precio por confirmar'"></div>
-                                <button class="btn-pedido" :disabled="p.agotado"
-                                    @click="p.agotado ? null : agregarAlCarrito(p)">
-                                    <span x-text="p.agotado ? '❌ AGOTADO' : '🛒 Agregar'"></span>
+                                <button class="btn-pedido" :disabled="p.agotado || tiendaCerrada"
+                                    @click="(p.agotado || tiendaCerrada) ? null : agregarAlCarrito(p)">
+                                    <span x-text="p.agotado ? '❌ AGOTADO' : (tiendaCerrada ? '🔒 Cerrado' : '🛒 Agregar')"></span>
                                 </button>
                             </div>
                         </template>
@@ -424,9 +446,9 @@
                 <span class="cart-total-val" x-text="'$' + totalPrecio.toLocaleString('es-CO')"></span>
             </div>
             <div class="cart-actions" x-show="carrito.length > 0">
-                <button class="btn-enviar-pedido" @click="enviarPedido()">
+                <button class="btn-enviar-pedido" @click="enviarPedido()" :disabled="tiendaCerrada">
                     <i class="fab fa-whatsapp" style="margin-right:8px;font-size:18px;"></i>
-                    Enviar pedido por WhatsApp
+                    <span x-text="tiendaCerrada ? 'No estamos recibiendo pedidos' : 'Enviar pedido por WhatsApp'"></span>
                 </button>
                 <button class="btn-vaciar" @click="vaciarCarrito()">🗑️ Vaciar carrito</button>
             </div>
@@ -468,9 +490,9 @@
                     <label style="display:block;font-size:11px;font-weight:800;color:#8a8a8a;letter-spacing:.4px;margin-bottom:5px;">NOTAS (opcional)</label>
                     <textarea x-model="checkout.notas" rows="2" placeholder="Ej. sin cebolla, piso 3, timbre 2" style="width:100%;padding:13px 14px;border:1.5px solid #E2E8F0;border-radius:12px;font-size:15px;background:#fff;color:#111;resize:vertical;"></textarea>
                 </div>
-                <button type="button" class="btn-enviar-pedido" @click="confirmarPedido()" :disabled="enviandoPedido" style="width:100%;">
+                <button type="button" class="btn-enviar-pedido" @click="confirmarPedido()" :disabled="enviandoPedido || tiendaCerrada" style="width:100%;">
                     <i class="fab fa-whatsapp" style="margin-right:8px;font-size:18px;"></i>
-                    <span x-text="enviandoPedido ? 'Enviando…' : 'Confirmar pedido por WhatsApp'"></span>
+                    <span x-text="tiendaCerrada ? 'No estamos recibiendo pedidos' : (enviandoPedido ? 'Enviando…' : 'Confirmar pedido por WhatsApp')"></span>
                 </button>
             </div>
         </div>

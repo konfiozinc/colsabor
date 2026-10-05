@@ -167,6 +167,10 @@ document.addEventListener('alpine:init', () => {
             checkout: { nombre: '', telefono: '', direccion: '', metodoPago: 'Efectivo', notas: '' },
             enviandoPedido: false,
             metodosPago: ['Efectivo', 'Nequi', 'Daviplata', 'Transferencia'],
+
+            // ── Interruptor de tienda (ON/OFF en vivo desde el panel) ──
+            tiendaAbierta: true,
+            mensajeCierre: 'Nuestra cocina está al límite. Vuelve en unos minutos.',
             reseñas: [],
             nuevaReseña: { autor: '', texto: '', estrellas: 0 },
             adminMode: false,
@@ -211,6 +215,7 @@ document.addEventListener('alpine:init', () => {
             },
             get totalItems() { return this.carrito.reduce((s, i) => s + i.cantidad, 0); },
             get totalPrecio() { return this.carrito.reduce((s, i) => s + i.precio * i.cantidad, 0); },
+            get tiendaCerrada() { return this.tiendaAbierta === false; },
             get promedioEstrellas() {
                 if (!this.reseñas.length) return 0;
                 return (this.reseñas.reduce((s, r) => s + (r.estrellas || 0), 0) / this.reseñas.length).toFixed(1);
@@ -308,6 +313,16 @@ document.addEventListener('alpine:init', () => {
                         if (h && h.dias) { this.adminHorario = h; this.actualizarTextoHorario(); this.actualizarEstado(); }
                     }
                 });
+
+                // Interruptor de tienda ON/OFF (en vivo, sin recargar)
+                fbOn('colsabor/meta/tiendaAbierta', (snap) => {
+                    const v = snap.val();
+                    this.tiendaAbierta = (v === null || v === undefined) ? true : !!v;
+                });
+                fbOn('colsabor/meta/mensajeCierre', (snap) => {
+                    const m = snap.val();
+                    if (typeof m === 'string' && m.trim()) this.mensajeCierre = m.trim();
+                });
             },
 
             // ── Guardado (Firebase o local) ──
@@ -349,6 +364,7 @@ document.addEventListener('alpine:init', () => {
 
             // ── Productos ──
             agregarAlCarrito(p) {
+                if (this.tiendaCerrada) { this.mostrarToast('🔒 ' + this.mensajeCierre); return; }
                 const idx = this.carrito.findIndex(i => i.id === p.id);
                 if (idx >= 0) { this.carrito[idx].cantidad++; }
                 else { this.carrito.push({ id: p.id, nombre: p.nombre, precio: Number(p.precio) || 0, emoji: esImagenEmoji(p.imagen) ? p.imagen : (EMOJIS_CATEGORIA[p.categoria] || '🍔'), cantidad: 1 }); }
@@ -363,12 +379,14 @@ document.addEventListener('alpine:init', () => {
             vaciarCarrito() { if (confirm('¿Vaciar el carrito?')) this.carrito = []; },
             enviarPedido() {
                 if (!this.carrito.length) return;
+                if (this.tiendaCerrada) { this.mostrarToast('🔒 ' + this.mensajeCierre); return; }
                 this.carritoOpen = false;
                 this.checkoutOpen = true;
             },
 
             async confirmarPedido() {
                 if (!this.carrito.length) return;
+                if (this.tiendaCerrada) { this.mostrarToast('🔒 ' + this.mensajeCierre); return; }
                 const c = this.checkout;
                 if (!c.nombre.trim() || !c.telefono.trim() || !c.direccion.trim()) {
                     this.mostrarToast('⚠️ Completa nombre, teléfono y dirección');
