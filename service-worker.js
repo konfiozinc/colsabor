@@ -1,4 +1,4 @@
-const CACHE_NAME = 'colsabor-cache-v9';
+const CACHE_NAME = 'colsabor-cache-v10';
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -40,7 +40,10 @@ const PRECACHE_URLS = [
   './assets/productos/cafe-leche.jpg',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
-  './assets/icons/favicon.png'
+  './assets/icons/favicon.png',
+
+  // Audio de alerta del panel de pedidos
+  './assets/audio/alerta-pedido.mp3'
 ];
 
 self.addEventListener('install', (event) => {
