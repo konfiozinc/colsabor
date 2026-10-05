@@ -351,7 +351,7 @@ document.addEventListener('alpine:init', () => {
             agregarAlCarrito(p) {
                 const idx = this.carrito.findIndex(i => i.id === p.id);
                 if (idx >= 0) { this.carrito[idx].cantidad++; }
-                else { this.carrito.push({ id: p.id, nombre: p.nombre, precio: Number(p.precio) || 0, emoji: esImagenEmoji(p.imagen) ? p.imagen : '🍔', cantidad: 1 }); }
+                else { this.carrito.push({ id: p.id, nombre: p.nombre, precio: Number(p.precio) || 0, emoji: esImagenEmoji(p.imagen) ? p.imagen : (EMOJIS_CATEGORIA[p.categoria] || '🍔'), cantidad: 1 }); }
                 this.mostrarToast('🛒 ' + p.nombre + ' agregado');
             },
             quitarUno(id) {
@@ -420,7 +420,7 @@ document.addEventListener('alpine:init', () => {
                 this.carrito.forEach(i => {
                     msg += i.emoji + ' *' + i.nombre + '*\n   Cantidad: ' + i.cantidad + '\n   Precio: $' + (i.precio * i.cantidad).toLocaleString('es-CO') + '\n\n';
                 });
-                msg += '\n\u{1F4B0} *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
+                msg += '\u{1F4B0} *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
                 msg += '\u{1F4CD} Direcci\u00F3n: ' + c.direccion + '\n';
                 msg += '\u{1F4B3} Pago: ' + c.metodoPago + '\n';
                 if (c.notas) msg += '\u{1F4DD} Notas: ' + c.notas + '\n';
