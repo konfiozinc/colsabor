@@ -351,7 +351,7 @@ document.addEventListener('alpine:init', () => {
             agregarAlCarrito(p) {
                 const idx = this.carrito.findIndex(i => i.id === p.id);
                 if (idx >= 0) { this.carrito[idx].cantidad++; }
-                else { this.carrito.push({ id: p.id, nombre: p.nombre, precio: Number(p.precio) || 0, emoji: esImagenEmoji(p.imagen) ? p.imagen : '🍽️', cantidad: 1 }); }
+                else { this.carrito.push({ id: p.id, nombre: p.nombre, precio: Number(p.precio) || 0, emoji: esImagenEmoji(p.imagen) ? p.imagen : '🍔', cantidad: 1 }); }
                 this.mostrarToast('🛒 ' + p.nombre + ' agregado');
             },
             quitarUno(id) {
