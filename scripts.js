@@ -425,6 +425,7 @@ document.addEventListener('alpine:init', () => {
                 msg += '\u{1F4B3} Pago: ' + c.metodoPago + '\n';
                 if (c.notas) msg += '\u{1F4DD} Notas: ' + c.notas + '\n';
                 msg += '\n\u{1F194} Pedido ' + numeroPedido;
+                msg += '\n\u{1F517} Estado de tu pedido: https://konfiozinc.github.io/colsabor/pedido.html?codigo=' + codigoConsulta;
                 window.location.href = 'whatsapp://send?phone=57' + this.telefono + '&text=' + encodeURIComponent(msg);
 
                 // 5) Reset del estado
