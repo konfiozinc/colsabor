@@ -414,8 +414,8 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 // 4) Abrir WhatsApp con el mensaje + datos del cliente
-                let msg = '🍽️ *PEDIDO — Colsabor · Comida sana*\n';
-                msg += '👤 ' + c.nombre + ' · ' + c.telefono + '\n';
+                let msg = '\u{1F37D}\u{FE0F} *PEDIDO \u2014 Colsabor \u00B7 Comida sana*\n';
+                msg += '\u{1F464} ' + c.nombre + ' \u00B7 ' + c.telefono + '\n';
                 msg += '\n';
                 this.carrito.forEach(i => {
                     msg += i.emoji + ' *' + i.nombre + '*\n   Cantidad: ' + i.cantidad + '\n';
@@ -423,11 +423,11 @@ document.addEventListener('alpine:init', () => {
                     msg += '\n';
                 });
                 msg += '\n';
-                msg += '💰 *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
-                msg += '📍 Dirección: ' + c.direccion + '\n';
-                msg += '💳 Pago: ' + c.metodoPago + '\n';
-                if (c.notas) msg += '📝 Notas: ' + c.notas + '\n';
-                msg += '\n🆔 Pedido ' + numeroPedido;
+                msg += '\u{1F4B0} *TOTAL: $' + this.totalPrecio.toLocaleString('es-CO') + '*\n';
+                msg += '\u{1F4CD} Direcci\u00F3n: ' + c.direccion + '\n';
+                msg += '\u{1F4B3} Pago: ' + c.metodoPago + '\n';
+                if (c.notas) msg += '\u{1F4DD} Notas: ' + c.notas + '\n';
+                msg += '\n\u{1F194} Pedido ' + numeroPedido;
                 window.open('https://wa.me/' + NEGOCIO.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
 
                 // 5) Reset
