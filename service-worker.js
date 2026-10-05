@@ -1,4 +1,4 @@
-const CACHE_NAME = 'colsabor-cache-v10';
+const CACHE_NAME = 'colsabor-cache-v11';
 const PRECACHE_URLS = [
   './',
   './index.html',
