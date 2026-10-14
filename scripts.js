@@ -407,25 +407,35 @@ document.addEventListener('alpine:init', () => {
                 // 2) Código corto de consulta pública
                 const codigoConsulta = Math.random().toString(36).slice(2, 6).toUpperCase();
 
-                // 3) Guardar el pedido en RTDB (colsabor/pedidos)
-                const pedido = {
+                // 3) Guardar el pedido en RTDB, dividido en dos nodos:
+                //    colsabor/pedidos          -> LECTURA PÚBLICA (rastreo por código). Cero datos del cliente.
+                //    colsabor/pedidos_privados -> SOLO equipo autenticado. Aquí vive el objeto `cliente`.
+                const pedidoPublico = {
                     numeroPedido,
                     codigoConsulta,
-                    cliente: {
-                        nombre: c.nombre.trim(),
-                        telefono: c.telefono.trim(),
-                        direccion: c.direccion.trim(),
-                        metodoPago: c.metodoPago,
-                        notas: c.notas.trim()
-                    },
                     items: this.carrito.map(i => ({ productoId: i.id, nombre: i.nombre, precio: i.precio, cantidad: i.cantidad })),
                     total: this.totalPrecio,
                     estado: 'recibido',
                     fechaCreacion: firebase.database.ServerValue.TIMESTAMP,
                     fechaActualizacion: firebase.database.ServerValue.TIMESTAMP
                 };
+                const clientePrivado = {
+                    nombre: c.nombre.trim(),
+                    telefono: c.telefono.trim(),
+                    direccion: c.direccion.trim(),
+                    metodoPago: c.metodoPago,
+                    notas: c.notas.trim()
+                };
                 try {
-                    await fbRef('colsabor/pedidos').push(pedido);
+                    // Se genera la clave primero para que ambos nodos queden enlazados.
+                    const nuevaRef = fbRef('colsabor/pedidos').push();
+                    const clave = nuevaRef.key;
+                    await nuevaRef.set(pedidoPublico);
+                    await fbRef('colsabor/pedidos_privados').child(clave).set({
+                        numeroPedido,
+                        cliente: clientePrivado,
+                        fechaCreacion: firebase.database.ServerValue.TIMESTAMP
+                    });
                 } catch (e) {
                     console.error('[Colsabor] No se pudo guardar el pedido:', e);
                     this.mostrarToast('⚠️ No se guardó en el panel, pero continuamos por WhatsApp');
