@@ -1,0 +1,355 @@
+{
+  "_origen": "Firebase RTDB · colsabor/productos · lectura 2026-11-02",
+  "_nota": "Copia de evidencia. El menú público NO la usa: lee Firebase en vivo. Sirve de fixture para el emulador y documenta el estado real de disponibilidad.",
+  "productos": [
+    {
+      "id": "col-arepas-huevo",
+      "agotado": true,
+      "categoria": "Desayunos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/arepas-de-huevo.jpg",
+      "nombre": "Arepas de huevo",
+      "precio": 3000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-arroz-coco",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/arroz-coco.jpg",
+      "nombre": "Arroz de coco",
+      "precio": 6000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-arroz-coco-frito",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/arroz-coco-frito.jpg",
+      "nombre": "Arroz de coco frito",
+      "precio": 8000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-bandeja-paisa",
+      "agotado": false,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/bandeja-paisa.jpg",
+      "nombre": "Bandeja paisa",
+      "precio": 30000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-cafe-leche",
+      "agotado": false,
+      "categoria": "Bebidas",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/cafe-leche.jpg",
+      "nombre": "Café con leche",
+      "precio": 4000,
+      "tiempo": 10
+    },
+    {
+      "id": "col-carne-bistec",
+      "agotado": false,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/carne-bistec.jpg",
+      "nombre": "Carne en bistec",
+      "precio": 25000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-carne-cerdo",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/carne-cerdo.jpg",
+      "nombre": "Carne de cerdo a la plancha",
+      "precio": 23000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-carne-desmechada",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/carne-desmechada.jpg",
+      "nombre": "Carne desmechada",
+      "precio": 20000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-chocolate",
+      "agotado": true,
+      "categoria": "Bebidas",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/chocolate.jpg",
+      "nombre": "Chocolate",
+      "precio": 4000,
+      "tiempo": 10
+    },
+    {
+      "id": "col-desayuno-mixto",
+      "agotado": false,
+      "categoria": "Desayunos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/desayuno-mixto.jpg",
+      "nombre": "Desayuno mixto",
+      "precio": 13000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-empanadas",
+      "agotado": true,
+      "categoria": "Desayunos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/empanadas.jpg",
+      "nombre": "Empanadas",
+      "precio": 2000,
+      "tiempo": 10
+    },
+    {
+      "id": "col-higado-encebollado",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/higado-encebollado.jpg",
+      "nombre": "Hígado encebollado",
+      "precio": 20000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-jugo-corozo",
+      "agotado": false,
+      "categoria": "Jugos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/jugo-corozo.jpg",
+      "nombre": "Jugo de corozo",
+      "precio": 3000,
+      "tiempo": 5
+    },
+    {
+      "id": "col-jugo-maracuya",
+      "agotado": true,
+      "categoria": "Jugos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/jugo-maracuya.jpg",
+      "nombre": "Jugo de maracuyá",
+      "precio": 3000,
+      "tiempo": 5
+    },
+    {
+      "id": "col-jugo-naranja",
+      "agotado": false,
+      "categoria": "Jugos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/jugo-naranja.jpg",
+      "nombre": "Jugo de naranja",
+      "precio": 4000,
+      "tiempo": 5
+    },
+    {
+      "id": "col-jugo-pina",
+      "agotado": true,
+      "categoria": "Jugos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/jugo-pina.jpg",
+      "nombre": "Jugo de piña",
+      "precio": 4000,
+      "tiempo": 5
+    },
+    {
+      "id": "col-jugo-tamarindo",
+      "agotado": false,
+      "categoria": "Jugos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/jugo-tamarindo.jpg",
+      "nombre": "Jugo de tamarindo",
+      "precio": 4000,
+      "tiempo": 5
+    },
+    {
+      "id": "col-mojarra-roja",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/mojarra-roja.webp",
+      "nombre": "Mojarra roja",
+      "precio": 28000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-papas-rellenas",
+      "agotado": true,
+      "categoria": "Desayunos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/papas-rellenas.jpg",
+      "nombre": "Papas rellenas",
+      "precio": 2500,
+      "tiempo": 15
+    },
+    {
+      "id": "col-patacon-huevos",
+      "agotado": true,
+      "categoria": "Desayunos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/patacon-huevos.jpg",
+      "nombre": "Patacón con huevos pericos",
+      "precio": 10000,
+      "tiempo": 15
+    },
+    {
+      "id": "col-patacon-queso",
+      "agotado": true,
+      "categoria": "Desayunos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/patacon-queso.jpg",
+      "nombre": "Patacón con queso",
+      "precio": 6000,
+      "tiempo": 10
+    },
+    {
+      "id": "col-pechuga-plancha",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/pechuga-plancha.jpg",
+      "nombre": "Pechuga a la plancha",
+      "precio": 25000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-pescado-zumo-coco",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/pescado-zumo-coco.jpg",
+      "nombre": "Pescado en zumo de coco",
+      "precio": 30000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-sancocho-costilla",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/sancocho-costilla.jpg",
+      "nombre": "Sancocho de costilla de res",
+      "precio": 8000,
+      "tiempo": 25
+    },
+    {
+      "id": "col-sancocho-gallina",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/sancocho-gallina.jpg",
+      "nombre": "Sancocho de gallina",
+      "precio": 10000,
+      "tiempo": 25
+    },
+    {
+      "id": "col-sierra-cojinua",
+      "agotado": false,
+      "categoria": "Almuerzos",
+      "categorias": [
+        "Comidas"
+      ],
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/sierra-cojinua.jpg",
+      "nombre": "Sierra (lebranche)",
+      "precio": 30000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-sopa-mondongo",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/sopa-mondongo.jpg",
+      "nombre": "Sopa de Mondongo",
+      "precio": 12000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-sopa-pescado",
+      "agotado": true,
+      "categoria": "Almuerzos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/sopa-pescado.jpg",
+      "nombre": "Sopa de Pescado",
+      "precio": 8000,
+      "tiempo": 20
+    },
+    {
+      "id": "col-yuca-chicharron",
+      "agotado": true,
+      "categoria": "Desayunos",
+      "descripcion": "",
+      "destacado": true,
+      "imagen": "assets/productos/yuca-chicharron.jpg",
+      "nombre": "Yuca con Chicharrón",
+      "precio": 10000,
+      "tiempo": 15
+    }
+  ]
+}
