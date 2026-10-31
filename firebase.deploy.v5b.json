@@ -1,0 +1,8 @@
+﻿{
+  "database": {
+    "rules": "database.rules.v5b.json"
+  },
+  "projects": {
+    "default": "el-titi-menu"
+  }
+}
