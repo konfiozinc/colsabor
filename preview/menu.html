@@ -243,10 +243,14 @@ async function catalogoLocal() {
 async function cargar() {
   try {
     const rc = fetch(NEGOCIO.carpeta + "data/configuracion.json", { cache: "no-store" }).catch(() => null);
+    /* Col Sabor conserva el catálogo del repositorio como fuente principal: es el estado
+       que ya ve el cliente publicado. Firebase queda como respaldo (y para los pedidos).
+       Ver KZ-UI-012: en Firebase 21 de 29 productos están marcados como agotados y eso
+       cambiaría la disponibilidad mostrada, algo fuera del alcance de una corrección visual. */
     let lista = null, origen = "";
-    try { lista = await catalogoRemoto(); origen = "Firebase"; }
-    catch (e) { console.warn("[menú] catálogo remoto no disponible: " + e.message); }
-    if (!lista || !lista.length) { lista = await catalogoLocal(); origen = "copia del repositorio"; }
+    try { lista = await catalogoLocal(); origen = "catálogo del repositorio"; }
+    catch (e) { console.warn("[menú] catálogo local no disponible: " + e.message); }
+    if (!lista || !lista.length) { lista = await catalogoRemoto(); origen = "Firebase"; }
     const ocultos = new Set((NEGOCIO.pendientesAprobacion || []).map(String));
     productos = lista.filter((p) => p && !ocultos.has(String(p.id)));
     const res = await rc;
