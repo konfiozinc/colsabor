@@ -80,7 +80,7 @@ article.p.agotado img{filter:grayscale(1);opacity:.55}
 const NEGOCIO = {
   nombre: "Col Sabor",
   lema: "Comida casera con sazón de casa",
-  carpeta: "../",
+  carpeta: (function () { try { return /\/preview\//.test(location.pathname) ? "../" : ""; } catch (e) { return "../"; } })(),
   ns: "colsabor",          // raíz del sitio
   paleta: { fondo: "#FBF7F0", tinta: "#4A3222", acento: "#E8791A", suave: "#efe6d8" }
 };
