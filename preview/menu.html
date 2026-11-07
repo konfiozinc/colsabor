@@ -68,12 +68,15 @@ button{font-family:inherit}
 .foto::after{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(180deg,transparent,rgba(59,42,30,.28));pointer-events:none}
 .sello{position:absolute;top:10px;left:10px;z-index:2;background:var(--acento2);color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.5px;padding:5px 10px;border-radius:999px;text-transform:uppercase}
 .tarjeta.agotado .foto img{filter:grayscale(1);opacity:.6}
-.datos{padding:14px 15px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
-.datos h3{margin:0;font-size:clamp(.97rem,2.4vw,1.08rem);line-height:1.28;font-weight:800}
+.datos{padding:14px 15px 16px;display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+.datos h3{margin:0;font-size:clamp(.97rem,2.4vw,1.08rem);line-height:1.28;font-weight:800;overflow-wrap:anywhere}
 .meta{margin:0;color:var(--tinta2);font-size:.83rem;min-height:1.15em}
-.fila{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:6px}
-.precio{font-weight:900;font-size:clamp(1.02rem,2.7vw,1.22rem);color:var(--acento2);letter-spacing:.2px}
-.agregar{min-height:44px;min-width:44px;padding:0 16px;border:0;border-radius:12px;background:var(--acento);color:#fff;font-weight:800;font-size:.95rem;cursor:pointer;transition:filter .15s}
+/* La fila precio+botón se envuelve: en celulares angostos (320-414 px) el botón «Agregar» no cabía
+   al lado del precio y quedaba recortado por el overflow:hidden de la tarjeta. */
+.fila{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
+.precio{font-weight:900;font-size:clamp(1.02rem,2.7vw,1.22rem);color:var(--acento2);letter-spacing:.2px;min-width:0}
+.agregar{min-height:44px;min-width:44px;padding:0 16px;border:0;border-radius:12px;background:var(--acento);color:#fff;font-weight:800;font-size:.95rem;cursor:pointer;transition:filter .15s;flex:0 0 auto;white-space:nowrap;margin-left:auto}
+@media(max-width:400px){.agregar{padding:0 12px;font-size:.9rem}}
 .agregar:hover{filter:brightness(1.06)}
 .agregar:disabled{background:#E7DAC9;color:#9c8b78;cursor:not-allowed}
 .linea.agotado{opacity:.62}
@@ -169,8 +172,8 @@ button{font-family:inherit}
 
 <footer class="pie cont">
   <span id="pie-dir"></span>
-  <span>Menú digital · <a href="https://konfiozinc.github.io/card/" target="_blank" style="color: inherit; text-decoration: underline; font-weight: bold;">KONFÍO ZINC</a></span>
-· <a href="https://konfiozinc.github.io/card/privacidad.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Políticas de Privacidad</a>
+  <span>Menú digital · <a href="https://konfiozinc.github.io/card/" target="_blank" style="color: #3B2A1E; text-decoration: underline; font-weight: bold;">KONFÍO ZINC</a></span>
+· <a href="https://konfiozinc.github.io/card/privacidad.html" style="color: #3B2A1E; text-decoration: underline;">Políticas de Privacidad</a>
 </footer>
 
 <button class="bolsa" id="bolsa" aria-label="Abrir tu pedido">
@@ -253,7 +256,8 @@ async function catalogoRemoto() {
 
 function aplicarCatalogo(lista) {
   const ocultos = new Set((NEGOCIO.pendientesAprobacion || []).map(String));
-  productos = (lista || []).filter((p) => p && !ocultos.has(String(p.id)));
+  // Los agotados y los ocultos no entran al catálogo de la vista: si no están, no se pintan.
+  productos = (lista || []).filter((p) => p && p.agotado !== true && !ocultos.has(String(p.id)));
   let limpio = false;
   Object.keys(carrito).forEach((id) => { if (!productos.some((p) => String(p.id) === id)) { delete carrito[id]; limpio = true; } });
   if (limpio) guardar();
@@ -376,30 +380,32 @@ function pintarPortada() {
 }
 
 function categorias() {
-  const presentes = [...new Set(productos.map((p) => p.categoria).filter(Boolean))];
+  // Solo cuentan los productos que se van a ver: así no quedan secciones vacías.
+  const visibles = productos.filter((p) => p.agotado !== true);
+  const presentes = [...new Set(visibles.map((p) => p.categoria).filter(Boolean))];
   const orden = (config.categorias || []).filter((c) => presentes.includes(c));
   return orden.concat(presentes.filter((c) => !orden.includes(c)));
 }
 
 function tarjeta(p) {
-  const agotado = p.agotado === true;
+  // Un producto agotado no se pinta: ni tarjeta gris, ni hueco en la rejilla.
+  if (p.agotado === true) return "";
   const meta = [(p.etiquetas || []).join(" · "), p.tiempo ? p.tiempo + " min" : ""].filter(Boolean).join(" · ");
-  return '<article class="tarjeta' + (agotado ? " agotado" : "") + '">' +
+  return '<article class="tarjeta">' +
     '<button class="foto" data-ver="' + esc(p.id) + '" aria-label="Ver ' + esc(p.nombre) + '">' +
       '<img src="' + urlImagen(p) + '" alt="' + esc(p.nombre) + '" loading="lazy" onerror="this.src=\'' + NEGOCIO.carpeta + "assets/logo/no-image.png" + '\'">' +
-      (agotado ? '<span class="sello">Agotado</span>' : "") +
     "</button>" +
     '<div class="datos"><h3>' + esc(p.nombre) + "</h3>" +
     '<p class="meta">' + esc(meta) + "</p>" +
     '<div class="fila"><span class="precio">' + plato.format(p.precio || 0) + "</span>" +
-    '<button class="agregar" data-add="' + esc(p.id) + '"' + (agotado ? " disabled" : "") + ">Agregar</button></div></div></article>";
+    '<button class="agregar" data-add="' + esc(p.id) + '"' + ">Agregar</button></div></div></article>";
 }
 
 function pintar() {
   const cats = categorias();
   $("#cats").innerHTML = cats.map((c, i) => '<button data-cat="' + esc(ancla(c)) + '"' + (i === 0 ? ' class="on"' : "") + ">" + esc(c) + "</button>").join("");
   $("#lista").innerHTML = cats.map((c) => {
-    const items = productos.filter((p) => p.categoria === c);
+    const items = productos.filter((p) => p.categoria === c && p.agotado !== true);
     return '<section class="grupo" id="cat-' + ancla(c) + '"><div class="grupo-cab"><h2>' + esc(c) + "</h2><span>" + items.length + " " + (items.length === 1 ? "producto" : "productos") + '</span></div><div class="grid">' + items.map(tarjeta).join("") + "</div></section>";
   }).join("");
   $("#cats").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
