@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Colsabor · Comida sana</title>
-    <meta name="description" content="Menú digital de Colsabor, comida sana en El Porvenir. Papas rellenas, empanadas, arepas de huevo, jugos naturales, desayunos, almuerzos y más. ¡Pide por WhatsApp!">
+    <meta name="description" content="Menú digital de Colsabor, comida sana en El Porvenir. Papas rellenas, empanadas, arepas de huevo, jugos naturales, desayunos, almuerzos y más. ¡Pide por WhatsA…">
     <meta name="keywords" content="comida sana, papas rellenas, empanadas, arepas de huevo, jugos naturales, desayunos, almuerzos, El Porvenir">
     <meta name="author" content="Colsabor">
     <meta property="og:title" content="Colsabor · Comida sana">
@@ -54,7 +54,9 @@
 .btn-pedido:disabled{cursor:not-allowed}
 .btn-enviar-pedido:disabled{opacity:.55;cursor:not-allowed}
 </style>
-
+    <meta property="og:site_name" content="KONFÍO ZINC">
+    <meta property="og:locale" content="es_CO">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 <body>
 
@@ -316,7 +318,7 @@
                         <div class="product-item" :style="p.agotado ? 'opacity:.55' : ''">
                             <div class="product-emoji">
                                 <template x-if="esImagenEmoji(p.imagen)"><span x-text="p.imagen"></span></template>
-                                <template x-if="!esImagenEmoji(p.imagen)"><img :src="p.imagen || 'assets/logo/no-image.png'" loading="lazy" @error="$event.target.style.display='none'"></template>
+                                <template x-if="!esImagenEmoji(p.imagen)"><img alt="" :src="p.imagen || 'assets/logo/no-image.png'" loading="lazy" @error="$event.target.style.display='none'"></template>
                             </div>
                             <input class="admin-input grow" x-model="p.nombre" @change="sincronizarProducto(p)" title="Nombre" style="min-width:110px;">
                             <select class="admin-select" x-model="p.categoria" @change="sincronizarProducto(p)" title="Categoría" style="width:auto;flex:0 0 auto;font-size:11px;">
@@ -345,7 +347,7 @@
                 <div class="admin-row" style="margin-bottom:10px;">
                     <input class="admin-input grow" x-model="newProduct.imagen" placeholder="Emoji o ruta de foto · ej: 🍛 o assets/x.webp">
                     <div class="product-emoji">
-                        <template x-if="!esImagenEmoji(newProduct.imagen) && newProduct.imagen"><img :src="newProduct.imagen" loading="lazy" @error="$event.target.style.display='none'"></template>
+                        <template x-if="!esImagenEmoji(newProduct.imagen) && newProduct.imagen"><img alt="" :src="newProduct.imagen" loading="lazy" @error="$event.target.style.display='none'"></template>
                         <template x-if="esImagenEmoji(newProduct.imagen) || !newProduct.imagen"><span x-text="esImagenEmoji(newProduct.imagen) ? newProduct.imagen : '🍽️'"></span></template>
                     </div>
                 </div>
