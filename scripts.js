@@ -15,7 +15,7 @@ const NEGOCIO = {
 };
 
 let CATEGORIAS = ['Desayunos', 'Almuerzos', 'Comidas', 'Jugos', 'Bebidas'];
-  /* KZ-MENUS-007 - Aqui vivia const ADMIN_PIN = '1234', que autorizaba el panel
+  /* KZ-MENUS-007 - Aqui vivia el PIN por defecto que autorizaba el panel
      desde el propio navegador. Un PIN en el codigo del cliente no es una barrera:
      cualquiera lo lee y entra. Se retira. La autorizacion real es una sesion de
      Firebase Auth con rol admin (ver autorizarAdmin()). El panel bueno es admin.html. */
