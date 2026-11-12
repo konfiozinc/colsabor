@@ -17,8 +17,16 @@ const NEGOCIO = {
 let CATEGORIAS = ['Desayunos', 'Almuerzos', 'Comidas', 'Jugos', 'Bebidas'];
   /* KZ-MENUS-007 - Aqui vivia el PIN por defecto que autorizaba el panel
      desde el propio navegador. Un PIN en el codigo del cliente no es una barrera:
-     cualquiera lo lee y entra. Se retira. La autorizacion real es una sesion de
-     Firebase Auth con rol admin (ver autorizarAdmin()). El panel bueno es admin.html. */
+     cualquiera lo lee y entra. Se retira. La autorizacion real es la MISMA que ya
+     usa admin.html y la que exigen las reglas: _admin/<uid> = { activo:true, negocio }.
+     El panel bueno es admin.html. */
+
+  /* Regla unica de autorizacion administrativa: la misma condicion que aplica
+     admin.html en su onAuthStateChanged y la que exige database.rules.v5b.json en
+     cada .write (cuenta activa y del negocio correcto). Se expone para probarla. */
+  window.permisoAdmin = function (rol, negocio) {
+      return !!rol && rol.activo === true && rol.negocio === negocio;
+  };
 
 const EMOJIS_CATEGORIA = {
     'Desayunos': '🍳',
@@ -646,7 +654,7 @@ document.addEventListener('alpine:init', () => {
                  defecto: sin sesion, sin correo verificado o sin rol devuelve false y no
                  se habilita NINGUNA funcion administrativa. Para abrirla hace falta
                  configuracion productiva (ver INFORME-KZ-MENUS-007): habilitar
-                 Email/Contrasena, crear el usuario, poner usuarios/<uid>/rol = admin y
+                 Email/Contrasena, crear el usuario, poner _admin/<uid> = { activo: true, negocio: 'colsabor' } y
                  desplegar las reglas. */
               async autorizarAdmin() {
                   this.adminAuthenticated = false;
@@ -655,8 +663,8 @@ document.addEventListener('alpine:init', () => {
                       if (!FB.activo || !window.firebase || !firebase.auth) return false;
                       const u = firebase.auth().currentUser;
                       if (!u || u.emailVerified !== true) return false;
-                      const rol = await fbLeer('usuarios/' + u.uid + '/rol');
-                      if (rol !== 'admin') return false;
+                      const rol = await fbLeer('_admin/' + u.uid);
+                      if (!window.permisoAdmin(rol, 'colsabor')) return false;
                       this.adminAuthenticated = true;
                       return true;
                   } catch (e) {

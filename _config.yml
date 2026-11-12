@@ -1,0 +1,31 @@
+# KONFÍO ZINC · GitHub Pages — qué se publica de este repositorio
+# KZ-MENUS-007
+#
+# Pages sirve la RAÍZ del repositorio. Al definir `exclude` se sustituye la lista
+# por omisión de Jekyll, por eso se repiten aquí sus entradas.
+#
+# Lo importante: `index-v1.html` es la página heredada (la que cargaba scripts.js con
+# el panel por PIN). Se retira de la publicación; el archivo sigue en el repositorio y
+# hay copia en evidencias/KZ-MENUS-007/respaldo/colsabor/.
+
+title: Col Sabor · Comida sana
+description: Menú digital de Col Sabor. Pedidos por WhatsApp.
+
+exclude:
+  # Lista por omisión de Jekyll
+  - .sass-cache
+  - .jekyll-cache
+  - gemfiles
+  - node_modules
+  - vendor
+
+  # Interno del proyecto: no se sirve
+  - index-v1.html
+  - .pages.yml
+  - .gitignore
+  - README.md
+  - GUIA-CLIENTE.md
+  - servidor_local.js
+  - control-v5.cjs
+  - load-v5.cjs
+  - docs
