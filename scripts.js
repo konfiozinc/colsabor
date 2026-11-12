@@ -15,7 +15,10 @@ const NEGOCIO = {
 };
 
 let CATEGORIAS = ['Desayunos', 'Almuerzos', 'Comidas', 'Jugos', 'Bebidas'];
-const ADMIN_PIN = '1234'; // PIN del panel admin — cámbialo aquí.
+  /* KZ-MENUS-007 - Aqui vivia const ADMIN_PIN = '1234', que autorizaba el panel
+     desde el propio navegador. Un PIN en el codigo del cliente no es una barrera:
+     cualquiera lo lee y entra. Se retira. La autorizacion real es una sesion de
+     Firebase Auth con rol admin (ver autorizarAdmin()). El panel bueno es admin.html. */
 
 const EMOJIS_CATEGORIA = {
     'Desayunos': '🍳',
@@ -327,6 +330,7 @@ document.addEventListener('alpine:init', () => {
 
             // ── Guardado (Firebase o local) ──
             async guardarProducto(p) {
+                if (!this.puedeAdministrar()) return;
                 this.guardando = true;
                 try {
                     if (FB.activo) {
@@ -352,6 +356,7 @@ document.addEventListener('alpine:init', () => {
                 }
             },
             async subirCatalogo() {
+                if (!this.puedeAdministrar()) return;
                 if (!FB.activo) { this.mostrarToast('⚠️ Firebase no está configurado'); return; }
                 if (!confirm('¿Subir el catálogo actual a Firebase? Se reemplaza lo que haya en colsabor/productos.')) return;
                 this.guardando = true;
@@ -505,6 +510,7 @@ document.addEventListener('alpine:init', () => {
                 this.horarioTexto = nombres.join(' – ') + ' · ' + fmt(this.adminHorario.inicio) + ' a ' + fmt(this.adminHorario.fin);
             },
             async guardarHorario() {
+                if (!this.puedeAdministrar()) return;
                 let dias = String(this.adminHorario.dias).split(',').map(Number).filter(d => !isNaN(d) && d >= 0 && d <= 6);
                 if (dias.length === 0) { this.mostrarToast('Debe ingresar al menos un día'); return; }
                 this.adminHorario.dias = dias.join(',');
@@ -609,6 +615,7 @@ document.addEventListener('alpine:init', () => {
             actualizarCampoProducto(p, campo, valor) { p[campo] = valor; this.sincronizarProducto(p); },
             // Categorías adicionales (ej: un plato que va en Almuerzos y Comidas)
             async actualizarCategoriasExtra(p, texto) {
+                if (!this.puedeAdministrar()) return;
                 const lista = String(texto || '').split(',')
                     .map(s => s.trim())
                     .filter(s => s && s !== p.categoria && this.categorias.includes(s));
@@ -617,6 +624,7 @@ document.addEventListener('alpine:init', () => {
                 this.mostrarToast('✅ Categorías actualizadas');
             },
             async guardarPrecio(p) {
+                if (!this.puedeAdministrar()) return;
                 const nuevo = parseInt(p.precio_editable);
                 if (isNaN(nuevo) || nuevo < 0) { this.mostrarToast('⚠️ Precio inválido'); return; }
                 p.precio = nuevo;
@@ -625,16 +633,42 @@ document.addEventListener('alpine:init', () => {
             },
 
             // ── Admin: sesión y utilidades ──
-            loginAdmin() {
-                if (this.adminPassword === ADMIN_PIN) {
-                    this.adminAuthenticated = true;
-                    this.adminPassword = '';
-                    this.mostrarToast('🔓 Sesión iniciada');
-                } else {
-                    this.adminPassword = '';
-                    this.mostrarToast('⚠️ PIN incorrecto');
-                }
-            },
+              /* KZ-MENUS-007 - El PIN de 1234 ya no autoriza nada. */
+              async loginAdmin() {
+                  this.adminPassword = '';
+                  const ok = await this.autorizarAdmin();
+                  this.mostrarToast(ok
+                      ? 'Sesion de administrador iniciada'
+                      : 'El PIN ya no da acceso: usa el panel admin (admin.html)');
+                  return ok;
+              },
+              /* Autorizacion real: sesion de Firebase Auth con rol admin. Cerrada por
+                 defecto: sin sesion, sin correo verificado o sin rol devuelve false y no
+                 se habilita NINGUNA funcion administrativa. Para abrirla hace falta
+                 configuracion productiva (ver INFORME-KZ-MENUS-007): habilitar
+                 Email/Contrasena, crear el usuario, poner usuarios/<uid>/rol = admin y
+                 desplegar las reglas. */
+              async autorizarAdmin() {
+                  this.adminAuthenticated = false;
+                  this.adminMode = false;
+                  try {
+                      if (!FB.activo || !window.firebase || !firebase.auth) return false;
+                      const u = firebase.auth().currentUser;
+                      if (!u || u.emailVerified !== true) return false;
+                      const rol = await fbLeer('usuarios/' + u.uid + '/rol');
+                      if (rol !== 'admin') return false;
+                      this.adminAuthenticated = true;
+                      return true;
+                  } catch (e) {
+                      this.adminAuthenticated = false;
+                      return false;
+                  }
+              },
+              puedeAdministrar() {
+                  if (this.adminAuthenticated) return true;
+                  this.mostrarToast('Ese cambio requiere sesion de administrador (admin.html)');
+                  return false;
+              },
             logoutAdmin() {
                 this.adminAuthenticated = false;
                 this.adminMode = false;
@@ -642,6 +676,7 @@ document.addEventListener('alpine:init', () => {
             },
             totalAgotados() { return this.productos.filter(p => p.agotado).length; },
             async guardarPromo() {
+                if (!this.puedeAdministrar()) return;
                 localStorage.setItem('colsabor_promo', this.promoText);
                 if (FB.activo) { try { await fbSet('colsabor/promo', this.promoText); } catch (e) {} }
                 this.mostrarToast('💾 Promoción guardada');
