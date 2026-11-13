@@ -61,11 +61,11 @@ input,select,textarea{font-family:inherit;font-size:15px}
 
 /* ===== LISTA · KZ-COLSABOR-ADMIN-UI: tarjetas compactas con las 4 acciones integradas ===== */
 .list{display:grid;grid-template-columns:1fr;gap:12px;padding-bottom:104px}
+/* escritorio: DOS columnas (decision de Darwin, 12-nov). movil: una sola. */
 @media(min-width:760px){.list{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:1120px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;gap:8px 12px;align-items:stretch}
 .pimg{grid-column:1;grid-row:1;align-self:stretch;width:88px;min-height:88px;border-radius:12px;background:#EDF2F7 center/cover no-repeat}
-@media(min-width:1120px){.pimg{width:96px;min-height:96px}}
+@media(min-width:760px){.pimg{width:104px;min-height:104px}}
 .pinfo{grid-column:2;grid-row:1;align-self:center;min-width:0}
 .pname{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;overflow-wrap:anywhere}
 .pname .star{color:var(--warn)}
